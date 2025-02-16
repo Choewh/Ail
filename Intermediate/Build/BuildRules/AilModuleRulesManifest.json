@@ -1,8 +1,0 @@
-{
-	"SourceFiles": [
-		"C:\\Coding\\Unreal\\Ail\\Source\\Ail\\Ail.Build.cs",
-		"C:\\Coding\\Unreal\\Ail\\Source\\Ail.Target.cs",
-		"C:\\Coding\\Unreal\\Ail\\Source\\AilEditor.Target.cs"
-	],
-	"EngineVersion": "5.5.3"
-}
