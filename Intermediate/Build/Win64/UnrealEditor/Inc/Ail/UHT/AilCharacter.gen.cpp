@@ -8,72 +8,36 @@
 #include "Ail/AilCharacter.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
-// Cross Module References
-	AIL_API UClass* Z_Construct_UClass_AAilCharacter();
-	AIL_API UClass* Z_Construct_UClass_AAilCharacter_NoRegister();
-	ENGINE_API UClass* Z_Construct_UClass_ACharacter();
-	ENGINE_API UClass* Z_Construct_UClass_UCameraComponent_NoRegister();
-	ENGINE_API UClass* Z_Construct_UClass_USpringArmComponent_NoRegister();
-	ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputAction_NoRegister();
-	ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputMappingContext_NoRegister();
-	UPackage* Z_Construct_UPackage__Script_Ail();
+
+// Begin Cross Module References
+AIL_API UClass* Z_Construct_UClass_AAilCharacter();
+AIL_API UClass* Z_Construct_UClass_AAilCharacter_NoRegister();
+ENGINE_API UClass* Z_Construct_UClass_ACharacter();
+ENGINE_API UClass* Z_Construct_UClass_UCameraComponent_NoRegister();
+ENGINE_API UClass* Z_Construct_UClass_USpringArmComponent_NoRegister();
+ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputAction_NoRegister();
+ENHANCEDINPUT_API UClass* Z_Construct_UClass_UInputMappingContext_NoRegister();
+UPackage* Z_Construct_UPackage__Script_Ail();
 // End Cross Module References
-	void AAilCharacter::StaticRegisterNativesAAilCharacter()
-	{
-	}
-	IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(AAilCharacter);
-	UClass* Z_Construct_UClass_AAilCharacter_NoRegister()
-	{
-		return AAilCharacter::StaticClass();
-	}
-	struct Z_Construct_UClass_AAilCharacter_Statics
-	{
-		static UObject* (*const DependentSingletons[])();
+
+// Begin Class AAilCharacter
+void AAilCharacter::StaticRegisterNativesAAilCharacter()
+{
+}
+IMPLEMENT_CLASS_NO_AUTO_REGISTRATION(AAilCharacter);
+UClass* Z_Construct_UClass_AAilCharacter_NoRegister()
+{
+	return AAilCharacter::StaticClass();
+}
+struct Z_Construct_UClass_AAilCharacter_Statics
+{
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
-#endif
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_CameraBoom_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_CameraBoom;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_FollowCamera_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_FollowCamera;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_DefaultMappingContext_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_DefaultMappingContext;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_JumpAction_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_JumpAction;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_MoveAction_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_MoveAction;
-#if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_LookAction_MetaData[];
-#endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_LookAction;
-		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
-		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
-		static const UECodeGen_Private::FClassParams ClassParams;
-	};
-	UObject* (*const Z_Construct_UClass_AAilCharacter_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_ACharacter,
-		(UObject* (*)())Z_Construct_UPackage__Script_Ail,
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::DependentSingletons) < 16);
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::Class_MetaDataParams[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[] = {
 		{ "HideCategories", "Navigation" },
 		{ "IncludePath", "AilCharacter.h" },
 		{ "ModuleRelativePath", "AilCharacter.h" },
 	};
-#endif
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CameraBoom_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Camera" },
 #if !UE_BUILD_SHIPPING
@@ -85,10 +49,7 @@ void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
 		{ "ToolTip", "Camera boom positioning the camera behind the character" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom = { "CameraBoom", nullptr, (EPropertyFlags)0x00400000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, CameraBoom), Z_Construct_UClass_USpringArmComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom_MetaData), Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_FollowCamera_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Camera" },
 #if !UE_BUILD_SHIPPING
@@ -100,10 +61,7 @@ void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
 		{ "ToolTip", "Follow camera" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera = { "FollowCamera", nullptr, (EPropertyFlags)0x00400000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, FollowCamera), Z_Construct_UClass_UCameraComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera_MetaData), Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_DefaultMappingContext_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Input" },
 #if !UE_BUILD_SHIPPING
@@ -114,10 +72,7 @@ void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
 		{ "ToolTip", "MappingContext" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext = { "DefaultMappingContext", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, DefaultMappingContext), Z_Construct_UClass_UInputMappingContext_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext_MetaData), Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_JumpAction_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Input" },
 #if !UE_BUILD_SHIPPING
@@ -128,10 +83,7 @@ void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
 		{ "ToolTip", "Jump Input Action" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction = { "JumpAction", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, JumpAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction_MetaData), Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_MoveAction_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Input" },
 #if !UE_BUILD_SHIPPING
@@ -142,10 +94,7 @@ void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
 		{ "ToolTip", "Move Input Action" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction = { "MoveAction", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, MoveAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction_MetaData), Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction_MetaData) };
-#if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction_MetaData[] = {
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_LookAction_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
 		{ "Category", "Input" },
 #if !UE_BUILD_SHIPPING
@@ -156,58 +105,81 @@ void EmptyLinkFunctionForGeneratedCodeAilCharacter() {}
 		{ "ToolTip", "Look Input Action" },
 #endif
 	};
-#endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction = { "LookAction", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, LookAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction_MetaData), Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction_MetaData) };
-	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AAilCharacter_Statics::PropPointers[] = {
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction,
-	};
-	const FCppClassTypeInfoStatic Z_Construct_UClass_AAilCharacter_Statics::StaticCppClassTypeInfo = {
+#endif // WITH_METADATA
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_CameraBoom;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_FollowCamera;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_DefaultMappingContext;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_JumpAction;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_MoveAction;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_LookAction;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+	static UObject* (*const DependentSingletons[])();
+	static constexpr FCppClassTypeInfoStatic StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<AAilCharacter>::IsAbstract,
 	};
-	const UECodeGen_Private::FClassParams Z_Construct_UClass_AAilCharacter_Statics::ClassParams = {
-		&AAilCharacter::StaticClass,
-		"Game",
-		&StaticCppClassTypeInfo,
-		DependentSingletons,
-		nullptr,
-		Z_Construct_UClass_AAilCharacter_Statics::PropPointers,
-		nullptr,
-		UE_ARRAY_COUNT(DependentSingletons),
-		0,
-		UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::PropPointers),
-		0,
-		0x008000A4u,
-		METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::Class_MetaDataParams), Z_Construct_UClass_AAilCharacter_Statics::Class_MetaDataParams)
-	};
-	static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::PropPointers) < 2048);
-	UClass* Z_Construct_UClass_AAilCharacter()
+	static const UECodeGen_Private::FClassParams ClassParams;
+};
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom = { "CameraBoom", nullptr, (EPropertyFlags)0x00400000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, CameraBoom), Z_Construct_UClass_USpringArmComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CameraBoom_MetaData), NewProp_CameraBoom_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera = { "FollowCamera", nullptr, (EPropertyFlags)0x00400000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, FollowCamera), Z_Construct_UClass_UCameraComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_FollowCamera_MetaData), NewProp_FollowCamera_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext = { "DefaultMappingContext", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, DefaultMappingContext), Z_Construct_UClass_UInputMappingContext_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_DefaultMappingContext_MetaData), NewProp_DefaultMappingContext_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction = { "JumpAction", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, JumpAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_JumpAction_MetaData), NewProp_JumpAction_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction = { "MoveAction", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, MoveAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_MoveAction_MetaData), NewProp_MoveAction_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction = { "LookAction", nullptr, (EPropertyFlags)0x0040000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(AAilCharacter, LookAction), Z_Construct_UClass_UInputAction_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_LookAction_MetaData), NewProp_LookAction_MetaData) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AAilCharacter_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_CameraBoom,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_FollowCamera,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_DefaultMappingContext,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_JumpAction,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_MoveAction,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AAilCharacter_Statics::NewProp_LookAction,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::PropPointers) < 2048);
+UObject* (*const Z_Construct_UClass_AAilCharacter_Statics::DependentSingletons[])() = {
+	(UObject* (*)())Z_Construct_UClass_ACharacter,
+	(UObject* (*)())Z_Construct_UPackage__Script_Ail,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::DependentSingletons) < 16);
+const UECodeGen_Private::FClassParams Z_Construct_UClass_AAilCharacter_Statics::ClassParams = {
+	&AAilCharacter::StaticClass,
+	"Game",
+	&StaticCppClassTypeInfo,
+	DependentSingletons,
+	nullptr,
+	Z_Construct_UClass_AAilCharacter_Statics::PropPointers,
+	nullptr,
+	UE_ARRAY_COUNT(DependentSingletons),
+	0,
+	UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::PropPointers),
+	0,
+	0x008000A4u,
+	METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UClass_AAilCharacter_Statics::Class_MetaDataParams), Z_Construct_UClass_AAilCharacter_Statics::Class_MetaDataParams)
+};
+UClass* Z_Construct_UClass_AAilCharacter()
+{
+	if (!Z_Registration_Info_UClass_AAilCharacter.OuterSingleton)
 	{
-		if (!Z_Registration_Info_UClass_AAilCharacter.OuterSingleton)
-		{
-			UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_AAilCharacter.OuterSingleton, Z_Construct_UClass_AAilCharacter_Statics::ClassParams);
-		}
-		return Z_Registration_Info_UClass_AAilCharacter.OuterSingleton;
+		UECodeGen_Private::ConstructUClass(Z_Registration_Info_UClass_AAilCharacter.OuterSingleton, Z_Construct_UClass_AAilCharacter_Statics::ClassParams);
 	}
-	template<> AIL_API UClass* StaticClass<AAilCharacter>()
-	{
-		return AAilCharacter::StaticClass();
-	}
-	DEFINE_VTABLE_PTR_HELPER_CTOR(AAilCharacter);
-	AAilCharacter::~AAilCharacter() {}
-	struct Z_CompiledInDeferFile_FID_Ail_Source_Ail_AilCharacter_h_Statics
-	{
-		static const FClassRegisterCompiledInInfo ClassInfo[];
+	return Z_Registration_Info_UClass_AAilCharacter.OuterSingleton;
+}
+template<> AIL_API UClass* StaticClass<AAilCharacter>()
+{
+	return AAilCharacter::StaticClass();
+}
+DEFINE_VTABLE_PTR_HELPER_CTOR(AAilCharacter);
+AAilCharacter::~AAilCharacter() {}
+// End Class AAilCharacter
+
+// Begin Registration
+struct Z_CompiledInDeferFile_FID_Coding_Unreal_Ail_Source_Ail_AilCharacter_h_Statics
+{
+	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
+		{ Z_Construct_UClass_AAilCharacter, AAilCharacter::StaticClass, TEXT("AAilCharacter"), &Z_Registration_Info_UClass_AAilCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AAilCharacter), 3127532906U) },
 	};
-	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Ail_Source_Ail_AilCharacter_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AAilCharacter, AAilCharacter::StaticClass, TEXT("AAilCharacter"), &Z_Registration_Info_UClass_AAilCharacter, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AAilCharacter), 2352915105U) },
-	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Ail_Source_Ail_AilCharacter_h_1952012859(TEXT("/Script/Ail"),
-		Z_CompiledInDeferFile_FID_Ail_Source_Ail_AilCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Ail_Source_Ail_AilCharacter_h_Statics::ClassInfo),
-		nullptr, 0,
-		nullptr, 0);
+};
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Coding_Unreal_Ail_Source_Ail_AilCharacter_h_2978193053(TEXT("/Script/Ail"),
+	Z_CompiledInDeferFile_FID_Coding_Unreal_Ail_Source_Ail_AilCharacter_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Coding_Unreal_Ail_Source_Ail_AilCharacter_h_Statics::ClassInfo),
+	nullptr, 0,
+	nullptr, 0);
+// End Registration
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
