@@ -46,9 +46,12 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 		FGeometryScriptPrimitiveOptions Options;
 
 		FVector Location = UKismetMathLibrary::InverseTransformLocation(DynamicMeshComponent->GetComponentTransform(), InLocation);
+
+		//추후 박스 크기 받아오면 Box/2 로 수정
+		//Location -= FVector(10.f,10.f,10.f);
 		FTransform T(InRotation, Location, FVector(1.0, 1.0, 1.0));
 
-		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, T, 20.f, 20.f, 20.f);
+		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, T, 20.f, 20.f, 20.f, 0,0,0,EGeometryScriptPrimitiveOriginMode::Center);
 	}
 
 	UDynamicMesh* TargetDynamicMesh = DynamicMeshComponent->GetDynamicMesh();

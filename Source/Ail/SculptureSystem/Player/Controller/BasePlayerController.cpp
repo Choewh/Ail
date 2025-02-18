@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "DrawDebugHelpers.h"
 
@@ -67,7 +68,7 @@ void ABasePlayerController::SetupInputComponent()
 
 	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_LeftClick")))
 	{
-		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Started, this, &ABasePlayerController::OnLeftClick);
+		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnLeftClick);
 		//EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnLeftClick);
 	}
 	else
@@ -113,28 +114,40 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 	FVector Start = ControlledCharacter->GetCamera()-> GetComponentLocation();
 	FVector End = ControlledCharacter->GetCamera()->GetForwardVector()*300.f;
 	
-	//디버그
-	//DrawDebugLine(
-	//	GetWorld(),
-	//	Start,
-	//	Start+End,
-	//	FColor::Red,   // 색상
-	//	false,         // 영구 표시 여부 (false면 일정 시간 후 사라짐)
-	//	5.0f,          // 지속 시간 (초)
-	//	0,             // 뎁스 우선순위 (디폴트 0)
-	//	2.0f           // 선 두께
-	//);
-	//UE_LOG(LogTemp, Warning, TEXT("Camera Vec %s"), *Start.ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("End Vec %s"), *(Start+End).ToString());
+
+	//박스용
+	//FVector HalfSize = FVector(10.f, 10.f, 10.f);
+	//FRotator BoxRotator = FRotator::ZeroRotator;
+	//TArray<AActor*> IgnoreActors;
+	
+	// 디버그
+	// 
+	// 박스
+	// DrawDebugBox(const UWorld* InWorld, FVector const& Center, FVector const& Extent, FColor const& Color, bool bPersistentLines = false, float LifeTime = -1.f, uint8 DepthPriority = 0, float Thickness = 0.f) {}
+	
+	// 라인
+	DrawDebugLine(
+		GetWorld(),
+		Start,
+		Start+End,
+		FColor::Red,   // 색상
+		false,         // 영구 표시 여부 (false면 일정 시간 후 사라짐)
+		5.0f,          // 지속 시간 (초)
+		0,             // 뎁스 우선순위 (디폴트 0)
+		2.0f           // 선 두께
+	);
+	UE_LOG(LogTemp, Warning, TEXT("Camera Vec %s"), *Start.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("End Vec %s"), *(Start+End).ToString());
 
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
-	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start+End, ECC_Visibility, CollisionParams);
 
-	if(HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECC_Visibility, CollisionParams);
+
+	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
 	{
 		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
 		UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
-		TargetSculpture->DigSculpture(HitResult.Location,ControlledCharacter->GetCamera()->GetComponentRotation());
+		TargetSculpture->DigSculpture(HitResult.Location, ControlledCharacter->GetCamera()->GetComponentRotation());
 	}
 }
