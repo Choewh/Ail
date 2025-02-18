@@ -9,8 +9,11 @@ public class Ail : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] {
-            "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" 
+            "Core","CoreUObject","Engine","InputCore","EnhancedInput",
+            "GeometryScriptingCore","GeometryFramework","DynamicMesh" //다이나믹 매쉬
+
         });
+
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
 

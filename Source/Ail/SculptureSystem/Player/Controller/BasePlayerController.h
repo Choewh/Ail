@@ -29,8 +29,8 @@ protected:
 protected:
 	void OnMove(const FInputActionValue& InputActionValue);
 	void OnLook(const FInputActionValue& InputActionValue);
-	void OnDown(const FInputActionValue& InputActionValue);
-	
+	void OnUpDown(const FInputActionValue& InputActionValue);
+	void OnLeftClick(const FInputActionValue& InputActionValue);
 	//void OnZoomWheel(const FInputActionValue& InputActionValue);
 
 protected:

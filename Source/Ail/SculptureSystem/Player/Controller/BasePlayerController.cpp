@@ -1,8 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SculptureSystem/Player/Controller/BasePlayerController.h"
-#include "Kismet/KismetMathLibrary.h"
+#include "BasePlayerCharacter.h"
+#include "SculptureSystem/BaseSculpture.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
+
+#include "Kismet/KismetMathLibrary.h"
+
+#include "DrawDebugHelpers.h"
 
 ABasePlayerController::ABasePlayerController()
 {
@@ -47,16 +53,26 @@ void ABasePlayerController::SetupInputComponent()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IA_LookMouse is disabled"));
+		UE_LOG(LogTemp, Warning, TEXT("IA_Look is disabled"));
 	}
 
-	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_Up")))
+	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_UpDown")))
 	{
-		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnDown);
+		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnUpDown);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IA_Crouch is disabled"));
+		UE_LOG(LogTemp, Warning, TEXT("IA_Up is disabled"));
+	}
+
+	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_LeftClick")))
+	{
+		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Started, this, &ABasePlayerController::OnLeftClick);
+		//EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnLeftClick);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IA_Up is disabled"));
 	}
 }
 
@@ -64,7 +80,7 @@ void ABasePlayerController::OnMove(const FInputActionValue& InputActionValue)
 {
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 	const FRotator Rotation = K2_GetActorRotation();
-	const FRotator RotationYaw = FRotator(0.0, Rotation.Yaw, 0.0);
+	const FRotator RotationYaw = FRotator(Rotation.Pitch, Rotation.Yaw, 0.0);
 	const FVector ForwardVector = UKismetMathLibrary::GetForwardVector(RotationYaw);
 	const FVector RightVector = UKismetMathLibrary::GetRightVector(RotationYaw);
 
@@ -78,16 +94,47 @@ void ABasePlayerController::OnLook(const FInputActionValue& InputActionValue)
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 
 	AddYawInput(ActionValue.X);
-	AddPitchInput(ActionValue.Y);
+	AddPitchInput(-ActionValue.Y);
 }
 
-void ABasePlayerController::OnDown(const FInputActionValue& InputActionValue)
+void ABasePlayerController::OnUpDown(const FInputActionValue& InputActionValue)
 {
-	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
-	const FRotator Rotation = K2_GetActorRotation();
-	const FRotator RotationYaw = FRotator(0.0, Rotation.Yaw, 0.0);
-	const FVector UpVector = UKismetMathLibrary::GetUpVector(RotationYaw);
+	const float ActionValue = InputActionValue.Get<float>();
+	const FVector UpVector = FVector(0.f,0.f,1.f);
+
 	APawn* ControlledPawn = GetPawn();
-	ControlledPawn->AddMovementInput(UpVector, ActionValue.X);
-	ControlledPawn->AddMovementInput(-UpVector, -ActionValue.X);
+	ControlledPawn->AddMovementInput(UpVector, ActionValue);
+}
+
+void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValue)
+{
+	ABasePlayerCharacter* ControlledCharacter = Cast<ABasePlayerCharacter>(GetCharacter());
+
+	FVector Start = ControlledCharacter->GetCamera()-> GetComponentLocation();
+	FVector End = ControlledCharacter->GetCamera()->GetForwardVector()*300.f;
+	
+	//디버그
+	//DrawDebugLine(
+	//	GetWorld(),
+	//	Start,
+	//	Start+End,
+	//	FColor::Red,   // 색상
+	//	false,         // 영구 표시 여부 (false면 일정 시간 후 사라짐)
+	//	5.0f,          // 지속 시간 (초)
+	//	0,             // 뎁스 우선순위 (디폴트 0)
+	//	2.0f           // 선 두께
+	//);
+	//UE_LOG(LogTemp, Warning, TEXT("Camera Vec %s"), *Start.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("End Vec %s"), *(Start+End).ToString());
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start+End, ECC_Visibility, CollisionParams);
+
+	if(HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	{
+		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+		UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
+		TargetSculpture->DigSculpture(HitResult.Location,ControlledCharacter->GetCamera()->GetComponentRotation());
+	}
 }
