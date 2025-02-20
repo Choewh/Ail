@@ -26,6 +26,8 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(SpringArm);
+	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/LevelPrototyping/Meshes/SM_Cube.SM_Cube'"));
     if (MeshAsset.Succeeded())

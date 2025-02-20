@@ -32,9 +32,12 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 		FGeometryScriptPNTessellateOptions Options;
 		UGeometryScriptLibrary_MeshSubdivideFunctions::ApplyPNTessellation(DynamicMesh, Options);
 	}
+	
+	bResetOnRebuild = false;
 
-	DynamicMeshComponent->EnableComplexAsSimpleCollision();
-
+	DynamicMeshComponent->SetComplexAsSimpleCollisionEnabled(true,true);
+	DynamicMeshComponent->SetCollisionProfileName(TEXT("Sculpture"));
+	
 	Super::OnConstruction(Transform);
 }
 
@@ -47,7 +50,7 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 
 		FVector Location = UKismetMathLibrary::InverseTransformLocation(DynamicMeshComponent->GetComponentTransform(), InLocation);
 
-		//ÃßÈÄ ¹Ú½º Å©±â ¹Þ¾Æ¿À¸é Box/2 ·Î ¼öÁ¤
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ Å©ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½ Box/2 ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		//Location -= FVector(10.f,10.f,10.f);
 		FTransform T(InRotation, Location, FVector(1.0, 1.0, 1.0));
 

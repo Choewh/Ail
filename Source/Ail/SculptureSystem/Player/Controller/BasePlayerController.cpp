@@ -142,7 +142,7 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
 
-	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECC_Visibility, CollisionParams);
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 
 	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
 	{
