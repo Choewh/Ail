@@ -126,16 +126,16 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 	// DrawDebugBox(const UWorld* InWorld, FVector const& Center, FVector const& Extent, FColor const& Color, bool bPersistentLines = false, float LifeTime = -1.f, uint8 DepthPriority = 0, float Thickness = 0.f) {}
 	
 	// 라인
-	DrawDebugLine(
-		GetWorld(),
-		Start,
-		Start+End,
-		FColor::Red,   // 색상
-		false,         // 영구 표시 여부 (false면 일정 시간 후 사라짐)
-		5.0f,          // 지속 시간 (초)
-		0,             // 뎁스 우선순위 (디폴트 0)
-		2.0f           // 선 두께
-	);
+	//DrawDebugLine(
+	//	GetWorld(),
+	//	Start,
+	//	Start+End,
+	//	FColor::Red,   // 색상
+	//	false,         // 영구 표시 여부 (false면 일정 시간 후 사라짐)
+	//	5.0f,          // 지속 시간 (초)
+	//	0,             // 뎁스 우선순위 (디폴트 0)
+	//	2.0f           // 선 두께
+	//);
 	UE_LOG(LogTemp, Warning, TEXT("Camera Vec %s"), *Start.ToString());
 	UE_LOG(LogTemp, Warning, TEXT("End Vec %s"), *(Start+End).ToString());
 
