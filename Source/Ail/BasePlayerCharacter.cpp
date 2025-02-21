@@ -19,15 +19,20 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(RootComponent);
 	FollowCamera->bUsePawnControlRotation = true; // Camera does not rotate relative to arm
-
+		
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->ProbeSize = 0.0f;
 	SpringArm->TargetArmLength = -300.0f;
+	SpringArm->ProbeChannel = ECC_WorldStatic;
+ 	SpringArm->bUsePawnControlRotation = true;
+
 
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(SpringArm);
-	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	StaticMesh->SetCollisionProfileName(TEXT("Guide"));
+	
+	// 중앙을 BLocation에 맞추기
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/LevelPrototyping/Meshes/SM_Cube.SM_Cube'"));
     if (MeshAsset.Succeeded())
@@ -42,6 +47,20 @@ void ABasePlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 }
+void ABasePlayerCharacter::OnConstruction(const FTransform& Transform)
+{
+	FBox BoundingBox = StaticMesh->Bounds.GetBox();
+	FVector BoxExtent =	BoundingBox.GetExtent();
+
+	UE_LOG(LogTemp, Warning, TEXT("BoxExtent %s"), *BoxExtent.ToString());
+
+	
+	StaticMesh->SetRelativeLocation(-(BoxExtent));
+
+	StaticMesh->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.2f));
+	Super::OnConstruction(Transform);
+}
+
 
 // Called every frame
 void ABasePlayerCharacter::Tick(float DeltaTime)

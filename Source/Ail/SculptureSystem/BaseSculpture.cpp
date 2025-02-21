@@ -33,7 +33,7 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 		UGeometryScriptLibrary_MeshSubdivideFunctions::ApplyPNTessellation(DynamicMesh, Options);
 	}
 	
-	bResetOnRebuild = false;
+	//bResetOnRebuild = false;
 
 	DynamicMeshComponent->SetComplexAsSimpleCollisionEnabled(true,true);
 	DynamicMeshComponent->SetCollisionProfileName(TEXT("Sculpture"));
