@@ -82,9 +82,15 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 		return;
 	}
 
-	SplitStaticMeshActorByCollision(this, &CollisionData, GetWorld());
+	//SplitStaticMeshActorByCollision(this, &CollisionData, GetWorld());
 
 	ReleaseAllComputeMeshes();
+
+	TargetDynamicMesh->ProcessMesh([](const UE::Geometry::FDynamicMesh3& Mesh)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("First Vertex Position: %s"), *Mesh.GetVertex(0).ToString());
+		});
+
 }
 
 
