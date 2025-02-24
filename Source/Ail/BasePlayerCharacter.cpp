@@ -4,6 +4,7 @@
 #include "BasePlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -16,6 +17,10 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	MovementComponent->DefaultLandMovementMode = MOVE_Flying;
 	MovementComponent->BrakingDecelerationFlying = 5000.f;
 
+	UCapsuleComponent* PlayerCapsuleComponent = GetCapsuleComponent();
+	PlayerCapsuleComponent->SetCapsuleSize(10.f,10.f);
+
+
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(RootComponent);
 	FollowCamera->bUsePawnControlRotation = true; // Camera does not rotate relative to arm
@@ -23,10 +28,10 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->ProbeSize = 0.0f;
-	SpringArm->TargetArmLength = -300.0f;
+	SpringArm->TargetArmLength = -50.0f;
 	SpringArm->ProbeChannel = ECC_WorldStatic;
  	SpringArm->bUsePawnControlRotation = true;
-
+	FVector Temp = SpringArm->GetUnfixedCameraPosition();
 
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(SpringArm);
@@ -34,11 +39,14 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	
 	// 중앙을 BLocation에 맞추기
 
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/LevelPrototyping/Meshes/SM_Cube.SM_Cube'"));
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/SculptureSystem/Tool/SculptureConeTool.SculptureConeTool'"));
+
     if (MeshAsset.Succeeded())
     {
         StaticMesh->SetStaticMesh(MeshAsset.Object);
+		StaticMesh->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
     }
+
 }
 
 // Called when the game starts or when spawned
@@ -49,15 +57,10 @@ void ABasePlayerCharacter::BeginPlay()
 }
 void ABasePlayerCharacter::OnConstruction(const FTransform& Transform)
 {
-	FBox BoundingBox = StaticMesh->Bounds.GetBox();
-	FVector BoxExtent =	BoundingBox.GetExtent();
-
-	UE_LOG(LogTemp, Warning, TEXT("BoxExtent %s"), *BoxExtent.ToString());
-
-	
-	StaticMesh->SetRelativeLocation(-(BoxExtent));
-
-	StaticMesh->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.2f));
+	//@TODO
+	//함수로 변경해서 UI에서 툴의 크기 조절 
+	//게임내 모델링 기능 추가 고려하기
+	StaticMesh->SetRelativeScale3D(FVector(0.1f, 0.1f, 0.1f));
 	Super::OnConstruction(Transform);
 }
 

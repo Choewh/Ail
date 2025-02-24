@@ -30,7 +30,7 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 	{
 		FTransform T;
 		FGeometryScriptPrimitiveOptions Options;
-		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(DynamicMesh, Options, T, 200.f, 200.f, 200.f);
+		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(DynamicMesh, Options, T, 100, 100.f, 100.f);
 	}
 
 	{
@@ -63,12 +63,12 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, T, 50.f, 50.f, 50.f, 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
 		
 		//콘
-		//FRotator ConeRot = FRotator(0.f, 0.f, 90.f) + InRotation;
-		//FTransform ConeT(FRotator(90.f, 0.f, 0.f), Location, FVector(1.0, 1.0, 1.0));
-		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendCone(ToolDynamicMesh, Options, T, 15.f, 0.f, 10.f , 12 , 4 , true, EGeometryScriptPrimitiveOriginMode::Center);
+		FRotator ConeRot = FRotator(-90.f, 0.f, 0.f) + InRotation;
+		FTransform ConeT(ConeRot, Location, FVector(1.0, 1.0, 1.0));								//R 1 : H 6 / Scale 0.1f
+		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendCone(ToolDynamicMesh, Options, ConeT, 5.f, 0.f, 30.f , 12 , 0 , true, EGeometryScriptPrimitiveOriginMode::Base);
 
 		//원
-		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendSphereBox(ToolDynamicMesh, Options, T, 25.f , 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
+		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendSphereBox(ToolDynamicMesh, Options, T, 25.f , 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
 	}
 
 	UDynamicMesh* TargetDynamicMesh = DynamicMeshComponent->GetDynamicMesh();
@@ -84,32 +84,15 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 		UGeometryScriptLibrary_CollisionFunctions::SetDynamicMeshCollisionFromMesh(TargetDynamicMesh, DynamicMeshComponent, Options);
 	}
 
-	//{
-	//	FGeometryScriptMeshSelfUnionOptions Options;
-	//	UGeometryScriptLibrary_MeshBooleanFunctions::ApplyMeshSelfUnion(TargetDynamicMesh, Options );
-	//}
-
 	{
-		FGeometryScriptRemoveSmallComponentOptions Options;
-		UGeometryScriptLibrary_MeshRepairFunctions::RemoveSmallComponents(TargetDynamicMesh, Options);
+		FGeometryScriptRemoveSmallComponentOptions RemoveOptions;
+		RemoveOptions.MinVolume = 0.01f; // 최소 부피 설정
+		RemoveOptions.MinArea = 1.0f; // 최소 면적 설정
+		RemoveOptions.MinTriangleCount = 50; // 최소 삼각형 개수 설정
+		UGeometryScriptLibrary_MeshRepairFunctions::RemoveSmallComponents(TargetDynamicMesh, RemoveOptions);
 	}
-
-	FTriMeshCollisionData CollisionData;
-	bool bSuccess = DynamicMeshComponent->GetPhysicsTriMeshData(&CollisionData, true);
-	if (!bSuccess)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to retrieve collision data"));
-		return;
-	}
-
-	//SplitStaticMeshActorByCollision(this, &CollisionData, GetWorld());
 
 	ReleaseAllComputeMeshes();
-
-	TargetDynamicMesh->ProcessMesh([](const UE::Geometry::FDynamicMesh3& Mesh)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("First Vertex Position: %s"), *Mesh.GetVertex(0).ToString());
-		});
 
 }
 

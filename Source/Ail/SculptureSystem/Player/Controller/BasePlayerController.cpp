@@ -3,6 +3,7 @@
 #include "SculptureSystem/Player/Controller/BasePlayerController.h"
 #include "BasePlayerCharacter.h"
 #include "SculptureSystem/BaseSculpture.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 
@@ -142,12 +143,17 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
 
+	//@TODO 
+	//라인 트레이스 -> 툴따라가기 스프링암 길이
 	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
+	
+	FVector UnfixedCameraPosition = ControlledCharacter->SpringArm->GetUnfixedCameraPosition();
 
-	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
-	{
-		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
-		UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
-		TargetSculpture->DigSculpture(HitResult.Location, ControlledCharacter->GetCamera()->GetComponentRotation());
-	}
+	//if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	//{
+	//	ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+	//	UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
+	//	//Location
+	//	TargetSculpture->DigSculpture(HitResult.Location, ControlledCharacter->GetCamera()->GetComponentRotation());
+	//}
 }
