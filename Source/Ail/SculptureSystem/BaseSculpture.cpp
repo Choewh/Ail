@@ -9,6 +9,8 @@
 #include "GeometryScript/CollisionFunctions.h"
 #include "GeometryScript/MeshAssetFunctions.h"
 
+#include "GeometryScript/MeshRepairFunctions.h"
+
 #include "StaticMeshAttributes.h"
 
 #include "Kismet/KismetMathLibrary.h"
@@ -57,7 +59,16 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 		//Location -= FVector(10.f,10.f,10.f);
 		FTransform T(InRotation, Location, FVector(1.0, 1.0, 1.0));
 
-		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, T, 20.f, 20.f, 20.f, 0, 0, 0, EGeometryScriptPrimitiveOriginMode::Center);
+		//박스 
+		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, T, 50.f, 50.f, 50.f, 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
+		
+		//콘
+		//FRotator ConeRot = FRotator(0.f, 0.f, 90.f) + InRotation;
+		//FTransform ConeT(FRotator(90.f, 0.f, 0.f), Location, FVector(1.0, 1.0, 1.0));
+		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendCone(ToolDynamicMesh, Options, T, 15.f, 0.f, 10.f , 12 , 4 , true, EGeometryScriptPrimitiveOriginMode::Center);
+
+		//원
+		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendSphereBox(ToolDynamicMesh, Options, T, 25.f , 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
 	}
 
 	UDynamicMesh* TargetDynamicMesh = DynamicMeshComponent->GetDynamicMesh();
@@ -73,8 +84,17 @@ void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InR
 		UGeometryScriptLibrary_CollisionFunctions::SetDynamicMeshCollisionFromMesh(TargetDynamicMesh, DynamicMeshComponent, Options);
 	}
 
-	FTriMeshCollisionData CollisionData;
+	//{
+	//	FGeometryScriptMeshSelfUnionOptions Options;
+	//	UGeometryScriptLibrary_MeshBooleanFunctions::ApplyMeshSelfUnion(TargetDynamicMesh, Options );
+	//}
 
+	{
+		FGeometryScriptRemoveSmallComponentOptions Options;
+		UGeometryScriptLibrary_MeshRepairFunctions::RemoveSmallComponents(TargetDynamicMesh, Options);
+	}
+
+	FTriMeshCollisionData CollisionData;
 	bool bSuccess = DynamicMeshComponent->GetPhysicsTriMeshData(&CollisionData, true);
 	if (!bSuccess)
 	{
