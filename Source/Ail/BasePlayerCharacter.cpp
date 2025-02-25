@@ -5,12 +5,13 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ABasePlayerCharacter::ABasePlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
@@ -18,34 +19,36 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	MovementComponent->BrakingDecelerationFlying = 5000.f;
 
 	UCapsuleComponent* PlayerCapsuleComponent = GetCapsuleComponent();
-	PlayerCapsuleComponent->SetCapsuleSize(10.f,10.f);
+	PlayerCapsuleComponent->SetCapsuleSize(10.f, 10.f);
 
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(RootComponent);
 	FollowCamera->bUsePawnControlRotation = true; // Camera does not rotate relative to arm
-		
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->ProbeSize = 0.0f;
+	SpringArm->ProbeSize = 0.f;
 	SpringArm->TargetArmLength = -50.0f;
 	SpringArm->ProbeChannel = ECC_WorldStatic;
- 	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->bUsePawnControlRotation = true;
 	FVector Temp = SpringArm->GetUnfixedCameraPosition();
 
-    StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMesh->SetupAttachment(SpringArm);
-	StaticMesh->SetCollisionProfileName(TEXT("Guide"));
-	
+	ToolMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	ToolMesh->SetupAttachment(SpringArm);
+	ToolMesh->SetCollisionProfileName(TEXT("Guide"));
+
 	// 중앙을 BLocation에 맞추기
 
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/SculptureSystem/Tool/SculptureConeTool.SculptureConeTool'"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/SculptureSystem/Tool/SculptureBox.SculptureBox'"));
 
-    if (MeshAsset.Succeeded())
-    {
-        StaticMesh->SetStaticMesh(MeshAsset.Object);
-		StaticMesh->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
-    }
+	if (MeshAsset.Succeeded())
+	{
+		ToolMesh->SetStaticMesh(MeshAsset.Object);
+		ToolMesh->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
+		ToolMesh->bRenderCustomDepth = true;
+
+	}
 
 }
 
@@ -53,17 +56,17 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 void ABasePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
+
 void ABasePlayerCharacter::OnConstruction(const FTransform& Transform)
 {
 	//@TODO
 	//함수로 변경해서 UI에서 툴의 크기 조절 
 	//게임내 모델링 기능 추가 고려하기
-	StaticMesh->SetRelativeScale3D(FVector(0.1f, 0.1f, 0.1f));
+	ToolMesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	Super::OnConstruction(Transform);
 }
-
 
 // Called every frame
 void ABasePlayerCharacter::Tick(float DeltaTime)
@@ -77,5 +80,40 @@ void ABasePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABasePlayerCharacter::SetToolTransform(FTransform InTransform)
+{
+	//if(InTransform.GetLocation() == ToolMesh)
+	if (!ToolMesh->GetComponentTransform().TranslationEquals(InTransform))
+	{
+		SetToolLocation(InTransform.GetLocation());
+	}
+
+	// 현재 회전값과 다를 때만 적용
+	if (!ToolMesh->GetComponentTransform().RotationEquals(InTransform))
+	{
+		SetToolRotation(InTransform.GetRotation());
+	}
+
+	if (!ToolMesh->GetComponentTransform().Scale3DEquals(InTransform))
+	{
+		SetToolScale3D(InTransform.GetScale3D());
+	}
+}
+
+void ABasePlayerCharacter::SetToolLocation(FVector InLocation)
+{
+	ToolMesh->SetRelativeLocation(InLocation);
+}
+
+void ABasePlayerCharacter::SetToolRotation(FQuat InRotation)
+{
+	ToolMesh->SetRelativeRotation(InRotation);
+}
+
+void ABasePlayerCharacter::SetToolScale3D(FVector InScale)
+{
+	ToolMesh->SetRelativeScale3D(InScale);
 }
 

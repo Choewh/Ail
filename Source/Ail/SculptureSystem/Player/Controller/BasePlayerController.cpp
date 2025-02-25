@@ -64,7 +64,7 @@ void ABasePlayerController::SetupInputComponent()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IA_Up is disabled"));
+		UE_LOG(LogTemp, Warning, TEXT("IA_UpDown is disabled"));
 	}
 
 	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_LeftClick")))
@@ -74,7 +74,18 @@ void ABasePlayerController::SetupInputComponent()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IA_Up is disabled"));
+		UE_LOG(LogTemp, Warning, TEXT("IA_LeftClick is disabled"));
+	}
+
+
+	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_MouseWheel")))
+	{
+		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnWheelScroll);
+		//EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnLeftClick);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IA_MouseWheel is disabled"));
 	}
 }
 
@@ -111,16 +122,15 @@ void ABasePlayerController::OnUpDown(const FInputActionValue& InputActionValue)
 void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValue)
 {
 	ABasePlayerCharacter* ControlledCharacter = Cast<ABasePlayerCharacter>(GetCharacter());
-
-	FVector Start = ControlledCharacter->GetCamera()-> GetComponentLocation();
-	FVector End = ControlledCharacter->GetCamera()->GetForwardVector()*300.f;
-	
-
 	//박스용
 	//FVector HalfSize = FVector(10.f, 10.f, 10.f);
 	//FRotator BoxRotator = FRotator::ZeroRotator;
 	//TArray<AActor*> IgnoreActors;
-	
+
+	FVector Start = ControlledCharacter->GetCamera()->GetComponentLocation();
+	//스프링암 포지션
+	FTransform T = ControlledCharacter->SpringArm->GetSocketTransform(FName("Mesh"));
+	FVector End = T.GetLocation();
 	// 디버그
 	// 
 	// 박스
@@ -138,22 +148,43 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 	//	2.0f           // 선 두께
 	//);
 	UE_LOG(LogTemp, Warning, TEXT("Camera Vec %s"), *Start.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("End Vec %s"), *(Start+End).ToString());
+	UE_LOG(LogTemp, Warning, TEXT("End Vec %s"), *End.ToString());
 
 	FHitResult HitResult;
-	FCollisionQueryParams CollisionParams;
-
-	//@TODO 
-	//라인 트레이스 -> 툴따라가기 스프링암 길이
-	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
+	// 스피어의 반지름을 25로 설정 (필요에 따라 값 조정)
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(25.f);
+	FCollisionQueryParams	CollisionQueryParams;
+	// 스프링암 카메라 위치
+	//최종 트레이스
+	GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel1, Sphere, CollisionQueryParams);
 	
-	FVector UnfixedCameraPosition = ControlledCharacter->SpringArm->GetUnfixedCameraPosition();
+	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	{
+	 
+		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+		UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
+		//Location
+		TargetSculpture->DigSculpture(End, ControlledCharacter->GetCamera()->GetComponentRotation());
+	}
 
-	//if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
-	//{
-	//	ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
-	//	UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
-	//	//Location
-	//	TargetSculpture->DigSculpture(HitResult.Location, ControlledCharacter->GetCamera()->GetComponentRotation());
-	//}
+}
+
+void ABasePlayerController::OnWheelScroll(const FInputActionValue& InputActionValue)
+{
+	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
+
+
+	ABasePlayerCharacter* ControlledCharacter = Cast<ABasePlayerCharacter>(GetCharacter());
+
+	FVector TargetLocation = ControlledCharacter->GetActorLocation() + ControlledCharacter->GetActorForwardVector() * 100; // 앞쪽 100 유닛 떨어진 지점
+	FRotator LookAtRotation = FRotationMatrix::MakeFromX(TargetLocation - ControlledCharacter->GetActorLocation()).Rotator(); // 바라보는 방향 계산
+
+	float RollAmount = 45.0f; // 추가할 Roll 값
+	FRotator NewRotation = LookAtRotation;
+	NewRotation.Roll += RollAmount; // Roll 값만 추가
+
+	ControlledCharacter->SetToolTransform(FTransform
+	(NewRotation,
+		ControlledCharacter->ToolMesh->GetRelativeLocation(),
+		ControlledCharacter->ToolMesh->GetRelativeScale3D()));
 }

@@ -8,6 +8,7 @@
 #include "GeometryScript/MeshBooleanFunctions.h"
 #include "GeometryScript/CollisionFunctions.h"
 #include "GeometryScript/MeshAssetFunctions.h"
+#include "GeometryScript/MeshDeformFunctions.h"
 
 #include "GeometryScript/MeshRepairFunctions.h"
 
@@ -38,7 +39,7 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 		UGeometryScriptLibrary_MeshSubdivideFunctions::ApplyPNTessellation(DynamicMesh, Options);
 	}
 
-	//bResetOnRebuild = false;
+	bResetOnRebuild = false;
 
 	DynamicMeshComponent->SetComplexAsSimpleCollisionEnabled(true, true);
 	DynamicMeshComponent->SetCollisionProfileName(TEXT("Sculpture"));

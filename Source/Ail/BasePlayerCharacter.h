@@ -25,7 +25,8 @@ public:
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* StaticMesh;
+	UStaticMeshComponent* ToolMesh;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,10 +36,17 @@ public:
 
 	UCameraComponent* GetCamera() { check(FollowCamera); return FollowCamera; }
 
+	virtual void SetToolTransform(FTransform InTransform);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+
+	virtual void SetToolLocation(FVector InLocation);
+	virtual void SetToolRotation(FQuat InRotation);
+	virtual void SetToolScale3D(FVector InScale);
 
 };
