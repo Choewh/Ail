@@ -22,9 +22,8 @@ public:
 
 	virtual void DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform);
 
-private:
-	virtual void SplitStaticMeshActorByCollision(AGeneratedDynamicMeshActor* SourceActor, FTriMeshCollisionData* CollisionData, UWorld* World);
+	void RemoveConnectedMesh(FDynamicMesh3& Mesh, const FVector3d& Point);
 
-	virtual UStaticMesh* CreateStaticMeshFromData(const TArray<FVector3f>& Vertices, const TArray<FTriIndices>& Triangles);
+private:
 };
 
