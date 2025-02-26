@@ -28,7 +28,8 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->ProbeSize = 0.f;
+	SpringArm->SocketOffset = FVector(0.f, 20.f, -10.f);
+	SpringArm->ProbeSize = 1.f;
 	SpringArm->TargetArmLength = -50.0f;
 	SpringArm->ProbeChannel = ECC_WorldStatic;
 	SpringArm->bUsePawnControlRotation = true;
@@ -45,9 +46,7 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	if (MeshAsset.Succeeded())
 	{
 		ToolMesh->SetStaticMesh(MeshAsset.Object);
-		ToolMesh->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
 		ToolMesh->bRenderCustomDepth = true;
-
 	}
 
 }
@@ -56,7 +55,6 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 void ABasePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void ABasePlayerCharacter::OnConstruction(const FTransform& Transform)
@@ -109,7 +107,10 @@ void ABasePlayerCharacter::SetToolLocation(FVector InLocation)
 
 void ABasePlayerCharacter::SetToolRotation(FQuat InRotation)
 {
+
+	UE_LOG(LogTemp, Warning, TEXT("PreToolRotation at: %s"), *InRotation.ToString());
 	ToolMesh->SetRelativeRotation(InRotation);
+	UE_LOG(LogTemp, Warning, TEXT("CurToolRotation at: %s"), *InRotation.ToString());
 }
 
 void ABasePlayerCharacter::SetToolScale3D(FVector InScale)

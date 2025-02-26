@@ -31,7 +31,7 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 	{
 		FTransform T;
 		FGeometryScriptPrimitiveOptions Options;
-		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(DynamicMesh, Options, T, 100, 100.f, 100.f);
+		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(DynamicMesh, Options, T, 100.f, 100.f, 100.f);
 	}
 
 	{
@@ -47,26 +47,32 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 }
 
-void ABaseSculpture::DigSculpture(const FVector& InLocation, const FRotator& InRotation)
+void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh , const FTransform& InTransform)
 {
 	UDynamicMesh* ToolDynamicMesh = AllocateComputeMesh();
 
+	//툴모양으로 파내는 기능 //스위치문 넣어서 ㄱ
 	{
 		FGeometryScriptPrimitiveOptions Options;
 
-		FVector Location = UKismetMathLibrary::InverseTransformLocation(DynamicMeshComponent->GetComponentTransform(), InLocation);
-
-		//���� �ڽ� ũ�� �޾ƿ��� Box/2 �� ����
-		//Location -= FVector(10.f,10.f,10.f);
-		FTransform T(InRotation, Location, FVector(1.0, 1.0, 1.0));
-
-		//박스 
-		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, T, 50.f, 50.f, 50.f, 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
+		FVector Location = UKismetMathLibrary::InverseTransformLocation(DynamicMeshComponent->GetComponentTransform(), InTransform.GetLocation());
 		
+		FTransform NewTransform = InTransform;
+		NewTransform.SetLocation(Location);
+
+		FVector FullSize = InMesh->GetStaticMesh()->GetBoundingBox().GetSize();
+		
+		//박스
+		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(ToolDynamicMesh, Options, NewTransform, FullSize.X , FullSize.Y , FullSize.Z , 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);
+		UE_LOG(LogTemp, Warning, TEXT("InTransform: %s"), *InTransform.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("NewTransform: %s"), *NewTransform.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("NewTransform: %s"), *NewTransform.Rotator().ToString());
+
 		//콘
-		FRotator ConeRot = FRotator(-90.f, 0.f, 0.f) + InRotation;
-		FTransform ConeT(ConeRot, Location, FVector(1.0, 1.0, 1.0));								//R 1 : H 6 / Scale 0.1f
-		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendCone(ToolDynamicMesh, Options, ConeT, 5.f, 0.f, 30.f , 12 , 0 , true, EGeometryScriptPrimitiveOriginMode::Base);
+		
+		//FRotator ConeRot = FRotator(-90.f, 0.f, 0.f) + InRotation;
+		//FTransform ConeT(ConeRot, Location, FVector(1.0, 1.0, 1.0));								//R 1 : H 6 / Scale 0.1f
+		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendCone(ToolDynamicMesh, Options, ConeT, 5.f, 0.f, 30.f , 12 , 0 , true, EGeometryScriptPrimitiveOriginMode::Base);
 
 		//원
 		//UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendSphereBox(ToolDynamicMesh, Options, T, 25.f , 0 , 0 , 0 , EGeometryScriptPrimitiveOriginMode::Center);

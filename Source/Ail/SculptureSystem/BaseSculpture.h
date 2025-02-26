@@ -20,7 +20,7 @@ public:
 public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	virtual void DigSculpture(const FVector& InLocation, const FRotator& InRotation);
+	virtual void DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform);
 
 private:
 	virtual void SplitStaticMeshActorByCollision(AGeneratedDynamicMeshActor* SourceActor, FTriMeshCollisionData* CollisionData, UWorld* World);
