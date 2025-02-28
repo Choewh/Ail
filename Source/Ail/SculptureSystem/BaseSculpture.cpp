@@ -110,12 +110,12 @@ void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTra
 	//TODO
 	//해당 좌표에서 가장 가까운 삼각형 ID 찾기 
 	{
-		TargetDynamicMesh->ProcessMesh([&](const FDynamicMesh3& ReadMesh) {
-			UE::Geometry::FMeshConnectedComponents Components(&ReadMesh);
-			Components.FindConnectedTriangles(); //연결된 메쉬 찾기
+		//TargetDynamicMesh->ProcessMesh([&](const FDynamicMesh3& ReadMesh) {
+		//	UE::Geometry::FMeshConnectedComponents Components(&ReadMesh);
+		//	Components.FindConnectedTriangles(); //연결된 메쉬 찾기
 
 			//FDynamicMesh3 EditableMesh = ReadMesh;
-			UE::Geometry::FMeshConnectedComponents::FComponent MinComponent;
+			//UE::Geometry::FMeshConnectedComponents::FComponent MinComponent;
 			//MinComponent = Components[0];
 
 			//{
@@ -148,8 +148,7 @@ void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTra
 			//		EditableMesh.RemoveTriangle(TriangleID, true); // true = 빈 구멍을 남기지 않고 삭제
 			//	}
 			//}
-
-			});
+			//});
 
 	}
 
