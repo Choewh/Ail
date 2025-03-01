@@ -3,3 +3,14 @@
 
 #include "GameMode/BaseHUD.h"
 
+ABaseHUD::ABaseHUD()
+{
+}
+
+void ABaseHUD::PostInitializeComponents()
+{
+}
+
+void ABaseHUD::BeginPlay()
+{
+}

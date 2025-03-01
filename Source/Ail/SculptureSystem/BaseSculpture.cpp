@@ -13,16 +13,31 @@
 
 #include "Selections/MeshConnectedComponents.h"
 
+#include "Kismet/KismetRenderingLibrary.h"
+#include "Kismet/KismetMaterialLibrary.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Engine/Canvas.h"
 //#include "MeshQueries.h"
 //#include "StaticMeshAttributes.h"
 
 
 #include "Kismet/KismetMathLibrary.h"
 
-ABaseSculpture::ABaseSculpture(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+ABaseSculpture::ABaseSculpture()
 {
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Canvas(TEXT("/Script/Engine.Material'/Game/PaintingSystem/M_Canvas.M_Canvas'"));
 
+	if (Canvas.Succeeded())
+	{
+		M_Canvas = Canvas.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Brush(TEXT("/Script/Engine.Material'/Game/PaintingSystem/M_Brush.M_Brush'"));
+
+	if (Brush.Succeeded())
+	{
+		M_Brush = Brush.Object;
+	}
 }
 
 void ABaseSculpture::OnConstruction(const FTransform& Transform)
@@ -49,6 +64,36 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 
 	Super::OnConstruction(Transform);
 }
+
+void ABaseSculpture::BeginPlay()
+{
+	Super::BeginPlay();
+
+	RenderTargetInit();
+
+}
+
+
+
+void ABaseSculpture::RenderTargetInit()
+{
+	{
+		RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 1024, 1024);
+		UKismetRenderingLibrary::ClearRenderTarget2D(GetWorld(), RenderTarget, FLinearColor(1, 1, 1, 1));
+	}
+
+	{
+		UMaterialInstanceDynamic* MaterialDynamicInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Canvas);
+		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget);
+		DynamicMeshComponent->SetMaterial(0, MaterialDynamicInstance);
+	}
+
+	{
+		BrushMaterial = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush);
+	}
+}
+
+
 
 void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform)
 {
@@ -133,7 +178,7 @@ void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTra
 			//		}
 			//	}
 			//}
-			
+
 			//if (Components.Num() > 1)
 			//{
 			//	for (const UE::Geometry::FMeshConnectedComponents::FComponent& Component : Components.Components)
@@ -154,4 +199,47 @@ void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTra
 
 	ReleaseAllComputeMeshes();
 
+}
+
+void ABaseSculpture::DrawBrush(UTexture2D* BurshTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+{
+	{
+		BrushMaterial->SetTextureParameterValue(TEXT("BrushTexture"), Cast<UTexture>(BurshTexture));
+		FLinearColor BrushColor = FLinearColor::MakeRandomColor(); // 예제: 랜덤 색상
+		BrushMaterial->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
+	}
+
+	{
+		UCanvas* Canvas;
+		FVector2D Size;
+		FDrawToRenderTargetContext Context;
+		UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(GetWorld(), RenderTarget, Canvas, Size, Context);
+
+		Size *= DrawLocation;
+		BrushSize /= 2.f;
+
+		FVector2D ScreenPositon =	Size - BrushSize;
+
+		FVector2D ScreenSize = FVector2D(BrushSize, BrushSize);
+
+		DrawMaterial(Canvas, BrushMaterial, ScreenPositon, ScreenSize, FVector2D::ZeroVector);
+
+		UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
+	}
+}
+
+void ABaseSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize, FVector2D CoordinatePosition, FVector2D CoordinateSize, float Rotation, FVector2D PivotPoint) const
+{
+	if (RenderMaterial
+		&& ScreenSize.X > 0.0f
+		&& ScreenSize.Y > 0.0f
+		// Canvas can be NULL if the user tried to draw after EndDrawCanvasToRenderTarget
+		&& Canvas)
+	{
+		FCanvasTileItem TileItem(ScreenPosition, RenderMaterial->GetRenderProxy(), ScreenSize, CoordinatePosition, CoordinatePosition + CoordinateSize);
+		TileItem.Rotation = FRotator(0, Rotation, 0);
+		TileItem.PivotPoint = PivotPoint;
+		TileItem.SetColor(Canvas->DrawColor);
+		Canvas->DrawItem(TileItem);
+	}
 }

@@ -13,6 +13,13 @@ UCLASS()
 class AIL_API ABaseHUD : public AHUD
 {
 	GENERATED_BODY()
-	
+
+public:
+	ABaseHUD();
+
+public:
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+
 };
  

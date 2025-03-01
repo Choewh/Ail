@@ -17,7 +17,7 @@ AAilGameMode::AAilGameMode()
 	}
 	PlayerControllerClass =	ABasePlayerController::StaticClass();
 
-	static ConstructorHelpers::FClassFinder<AHUD> BaseHUD(TEXT("/Script/Engine.Blueprint'/Game/Blueprint/WBP_HUDBase.WBP_HUDBase'"));
+	static ConstructorHelpers::FClassFinder<AHUD> BaseHUD(TEXT("/Script/Engine.Blueprint'/Game/Blueprint/WBP_HUDBase.WBP_HUDBase_C'"));
 	if (BaseHUD.Class != NULL)
 	{
 		HUDClass = BaseHUD.Class;
