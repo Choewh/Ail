@@ -27,7 +27,7 @@ public:
 
 public:
 	virtual void DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform);
-	virtual void DrawBrush(UTexture2D* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
+	virtual void DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor);
 	//void RemoveConnectedMesh(FDynamicMesh3& Mesh, const FVector3d& Point);
 
 	virtual void ConvertMeshDynamicToStatic();
@@ -39,8 +39,9 @@ private:
 		FVector2D PivotPoint = FVector2D(0.5f, 0.5f)) const;
 
 private:
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* PaintingMeshComponent;
+
 	UMaterialInterface* M_Canvas;
 	UMaterialInterface* M_Brush;
 	UMaterialInstanceDynamic* BrushMaterial;

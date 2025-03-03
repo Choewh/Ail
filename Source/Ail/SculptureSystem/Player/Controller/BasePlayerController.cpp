@@ -13,6 +13,8 @@
 
 #include "DrawDebugHelpers.h"
 
+#include "Test/TestActor.h"
+
 ABasePlayerController::ABasePlayerController()
 {
 	{
@@ -257,17 +259,41 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 	//}
 
 	//Sculpture Painting Func
+	//{
+	//	FVector Start = ControlledCharacter->GetCamera()->GetComponentLocation();
+	//	FVector End = ControlledCharacter->GetCamera()->GetForwardVector() * 300.f;
+
+	//	FHitResult HitResult;
+	//	FCollisionQueryParams CollisionParams;
+	//	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1 , CollisionParams);
+
+	//	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	//	{
+	//		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+	//		UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
+	//		//Location
+	//		FVector2D UV;
+	//		float BrushSize = 50.f;
+	//		FLinearColor BrushColor = FLinearColor(0, 0, 1, 1);
+
+	//		UGameplayStatics::FindCollisionUV(HitResult, 0, UV);
+
+	//		TargetSculpture->DrawBrush(T_Paint, BrushSize, UV, BrushColor);
+	//	}
+	//}
+
+
 	{
 		FVector Start = ControlledCharacter->GetCamera()->GetComponentLocation();
 		FVector End = ControlledCharacter->GetCamera()->GetForwardVector() * 300.f;
 
 		FHitResult HitResult;
 		FCollisionQueryParams CollisionParams;
-		GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1 , CollisionParams);
+		GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 
-		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ATestActor::StaticClass()))
 		{
-			ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+			ATestActor* TargetSculpture = Cast<ATestActor>(HitResult.GetActor());
 			UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
 			//Location
 			FVector2D UV;

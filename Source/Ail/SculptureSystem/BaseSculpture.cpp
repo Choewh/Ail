@@ -28,7 +28,15 @@ ABaseSculpture::ABaseSculpture()
 {
 
 	PaintingMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	PaintingMeshComponent->SetActive(false);
+	PaintingMeshComponent->SetVisibility(false);
+	PaintingMeshComponent->SetupAttachment(DynamicMeshComponent);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/SculptureSystem/Tool/Cube.Cube'"));
+
+	if (MeshAsset.Succeeded())
+	{
+		PaintingMeshComponent->SetStaticMesh(MeshAsset.Object);
+	}
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Canvas(TEXT("/Script/Engine.Material'/Game/PaintingSystem/M_Canvas.M_Canvas'"));
 
@@ -85,13 +93,17 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 	UDynamicMesh* DynamicMesh = DynamicMeshComponent->GetDynamicMesh();
 	UStaticMesh* PaintingMesh = PaintingMeshComponent->GetStaticMesh();
 
-	FGeometryScriptCopyMeshFromAssetOptions AssetOptions;
-	FGeometryScriptMeshReadLOD RequestedLOD;
+	FGeometryScriptCopyMeshToAssetOptions Options;
+	FGeometryScriptMeshWriteLOD TargetLOD;
 	EGeometryScriptOutcomePins Outcome;
 
-	UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshFromStaticMeshV2(PaintingMesh, DynamicMesh, AssetOptions, RequestedLOD, Outcome);
+	UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshToStaticMesh(DynamicMesh, PaintingMesh, Options, TargetLOD, Outcome);
+
+	FVector Temp = FVector(PaintingMeshComponent->Bounds.BoxExtent);
+	PaintingMeshComponent->SetRelativeLocation(FVector(0.f, 0.f, PaintingMeshComponent->Bounds.BoxExtent.Z));
 	
-	DynamicMeshComponent->SetActive(false);
+	DynamicMeshComponent->SetVisibility(false);
+	PaintingMeshComponent->SetVisibility(true);
 	//UStaticMesh* FromStaticMeshAsset,
 	//UDynamicMesh* ToDynamicMesh,
 	//FGeometryScriptCopyMeshFromAssetOptions AssetOptions,
@@ -112,6 +124,7 @@ void ABaseSculpture::RenderTargetInit()
 		UMaterialInstanceDynamic* MaterialDynamicInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Canvas);
 		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget);
 		DynamicMeshComponent->SetMaterial(0, MaterialDynamicInstance);
+		PaintingMeshComponent->SetMaterial(0, MaterialDynamicInstance);
 	}
 
 	{
@@ -229,12 +242,11 @@ void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTra
 
 
 
-void ABaseSculpture::DrawBrush(UTexture2D* BurshTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+void ABaseSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
 {
 	{
-		BrushMaterial->SetTextureParameterValue(TEXT("BrushTexture"), Cast<UTexture>(BurshTexture));
-		FLinearColor BrushColor = FLinearColor::MakeRandomColor(); // 예제: 랜덤 색상
-		BrushMaterial->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
+		BrushMaterial->SetTextureParameterValue(TEXT("BrushTexture"), Cast<UTexture>(BrushTexture));
+		//BrushMaterial->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
 	}
 
 	{
