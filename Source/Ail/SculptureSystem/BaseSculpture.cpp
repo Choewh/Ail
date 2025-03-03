@@ -8,6 +8,7 @@
 #include "GeometryScript/MeshBooleanFunctions.h"
 #include "GeometryScript/CollisionFunctions.h"
 #include "GeometryScript/MeshQueryFunctions.h"
+#include "GeometryScript/MeshAssetFunctions.h"
 
 #include "GeometryScript/MeshRepairFunctions.h"
 
@@ -25,6 +26,10 @@
 
 ABaseSculpture::ABaseSculpture()
 {
+
+	PaintingMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	PaintingMeshComponent->SetActive(false);
+
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Canvas(TEXT("/Script/Engine.Material'/Game/PaintingSystem/M_Canvas.M_Canvas'"));
 
 	if (Canvas.Succeeded())
@@ -74,6 +79,27 @@ void ABaseSculpture::BeginPlay()
 }
 
 
+
+void ABaseSculpture::ConvertMeshDynamicToStatic()
+{
+	UDynamicMesh* DynamicMesh = DynamicMeshComponent->GetDynamicMesh();
+	UStaticMesh* PaintingMesh = PaintingMeshComponent->GetStaticMesh();
+
+	FGeometryScriptCopyMeshFromAssetOptions AssetOptions;
+	FGeometryScriptMeshReadLOD RequestedLOD;
+	EGeometryScriptOutcomePins Outcome;
+
+	UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshFromStaticMeshV2(PaintingMesh, DynamicMesh, AssetOptions, RequestedLOD, Outcome);
+	
+	DynamicMeshComponent->SetActive(false);
+	//UStaticMesh* FromStaticMeshAsset,
+	//UDynamicMesh* ToDynamicMesh,
+	//FGeometryScriptCopyMeshFromAssetOptions AssetOptions,
+	//FGeometryScriptMeshReadLOD RequestedLOD,
+	//EGeometryScriptOutcomePins& Outcome,
+	//bool bUseSectionMaterials,
+	//UGeometryScriptDebug* Debug)
+}
 
 void ABaseSculpture::RenderTargetInit()
 {
@@ -201,6 +227,8 @@ void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTra
 
 }
 
+
+
 void ABaseSculpture::DrawBrush(UTexture2D* BurshTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
 {
 	{
@@ -218,7 +246,7 @@ void ABaseSculpture::DrawBrush(UTexture2D* BurshTexture, float BrushSize, FVecto
 		Size *= DrawLocation;
 		BrushSize /= 2.f;
 
-		FVector2D ScreenPositon =	Size - BrushSize;
+		FVector2D ScreenPositon = Size - BrushSize;
 
 		FVector2D ScreenSize = FVector2D(BrushSize, BrushSize);
 

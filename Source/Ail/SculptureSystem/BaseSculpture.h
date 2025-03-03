@@ -30,8 +30,8 @@ public:
 	virtual void DrawBrush(UTexture2D* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
 	//void RemoveConnectedMesh(FDynamicMesh3& Mesh, const FVector3d& Point);
 
+	virtual void ConvertMeshDynamicToStatic();
 private:
-
 	virtual void RenderTargetInit();
 
 	void							DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize,
@@ -40,6 +40,7 @@ private:
 
 private:
 	
+	UStaticMeshComponent* PaintingMeshComponent;
 	UMaterialInterface* M_Canvas;
 	UMaterialInterface* M_Brush;
 	UMaterialInstanceDynamic* BrushMaterial;

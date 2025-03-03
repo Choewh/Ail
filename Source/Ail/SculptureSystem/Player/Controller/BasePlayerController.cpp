@@ -95,6 +95,41 @@ void ABasePlayerController::SetupInputComponent()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("IA_MouseWheel is disabled"));
 	}
+
+	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_Test")))
+	{
+		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnTest);
+		//EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnLeftClick);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IA_MouseWheel is disabled"));
+	}
+}
+void ABasePlayerController::OnTest(const FInputActionValue& InputActionValue)
+{
+	ABasePlayerCharacter* ControlledCharacter = Cast<ABasePlayerCharacter>(GetCharacter());
+
+	FVector Start = ControlledCharacter->GetCamera()->GetComponentLocation();
+	FVector End = ControlledCharacter->GetCamera()->GetForwardVector() * 300.f;
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
+
+	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	{
+		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+		UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
+		//Location
+		FVector2D UV;
+		float BrushSize = 50.f;
+		FLinearColor BrushColor = FLinearColor(0, 0, 1, 1);
+
+		UGameplayStatics::FindCollisionUV(HitResult, 0, UV);
+
+		TargetSculpture->ConvertMeshDynamicToStatic();
+	}
 }
 
 void ABasePlayerController::OnMove(const FInputActionValue& InputActionValue)

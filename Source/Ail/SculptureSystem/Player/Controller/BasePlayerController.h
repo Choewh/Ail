@@ -28,6 +28,7 @@ protected:
 
 protected:
 
+	void OnTest(const FInputActionValue& InputActionValue);
 	void OnMove(const FInputActionValue& InputActionValue);
 	void OnLook(const FInputActionValue& InputActionValue);
 	void OnUpDown(const FInputActionValue& InputActionValue);
