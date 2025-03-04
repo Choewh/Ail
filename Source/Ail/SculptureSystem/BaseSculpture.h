@@ -9,22 +9,27 @@
 /**
  * 
  */
+
+class UTextureRenderTarget2D;
+
 UCLASS()
 class AIL_API ABaseSculpture : public AGeneratedDynamicMeshActor
 {
 	GENERATED_BODY()
 	
 public:
-	ABaseSculpture(const FObjectInitializer& ObjectInitializer);
+	ABaseSculpture();
 
 public:
+	virtual void BeginPlay();
+
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+public:
 	virtual void DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform);
+	
+	//제자리에 바꿔서 스태틱 매쉬 생성
+	virtual void ConvertMeshDynamicToStatic();
 
-private:
-	virtual void SplitStaticMeshActorByCollision(AGeneratedDynamicMeshActor* SourceActor, FTriMeshCollisionData* CollisionData, UWorld* World);
-
-	virtual UStaticMesh* CreateStaticMeshFromData(const TArray<FVector3f>& Vertices, const TArray<FTriIndices>& Triangles);
 };
 
