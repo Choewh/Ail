@@ -34,7 +34,6 @@ protected:
 	void OnUpDown(const FInputActionValue& InputActionValue);
 	void OnLeftClick(const FInputActionValue& InputActionValue);
 	void OnRightClick(const FInputActionValue& InputActionValue);
-	void OnTest(const FInputActionValue& InputActionValue);
 
 	void OnWheelScroll(const FInputActionValue& InputActionValue);
 	//void OnZoomWheel(const FInputActionValue& InputActionValue);

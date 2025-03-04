@@ -13,12 +13,8 @@
 
 #include "DrawDebugHelpers.h"
 
-#include "Test/TestActor.h"
-<<<<<<< HEAD
+#include "PaintingSystem/TestActor.h"
 #include "BodySetupCore.h"
-=======
->>>>>>> origin/master
-
 ABasePlayerController::ABasePlayerController()
 {
 	{
@@ -111,18 +107,11 @@ void ABasePlayerController::SetupInputComponent()
 	if (const UInputAction* InputAction = FUtils::GetInputActionFromName(IMC_Default, TEXT("IA_Test")))
 	{
 		EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnTest);
-<<<<<<< HEAD
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("IA_Test is disabled"));
-=======
 		//EnhancedInputComponent->BindAction(InputAction, ETriggerEvent::Triggered, this, &ABasePlayerController::OnLeftClick);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("IA_MouseWheel is disabled"));
->>>>>>> origin/master
 	}
 }
 void ABasePlayerController::OnTest(const FInputActionValue& InputActionValue)
@@ -184,7 +173,6 @@ void ABasePlayerController::OnUpDown(const FInputActionValue& InputActionValue)
 void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValue)
 {
 	ABasePlayerCharacter* ControlledCharacter = Cast<ABasePlayerCharacter>(GetCharacter());
-<<<<<<< HEAD
 	//Sculpture Dig Func
 	{
 
@@ -358,145 +346,6 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 			{
 				TargetSculpture->DrawBrush(T_Paint, BrushSize, UV, BrushColor);
 			}
-
-=======
-	////Sculpture Dig Func
-	//{
-
-	//	// 툴의 정보를 토대로 콜리전을 생성함
-	//	// 박스 피벗 포지션
-	//	FVector BoxPosition = ControlledCharacter->ToolMesh->GetComponentLocation();
-
-	//	// 박스 전방 방향 벡터
-	//	FVector ForwardDir = ControlledCharacter->ToolMesh->GetForwardVector();
-
-	//	// 박스 콜리전 생성
-	//	FCollisionShape Box = FCollisionShape::MakeBox(ControlledCharacter->ToolMesh->GetStaticMesh()->GetBoundingBox().GetSize() / 2
-	//		* ControlledCharacter->ToolMesh->GetRelativeScale3D());
-	//	// 박스 이동 방향 결정
-	//	BoxPosition += ForwardDir * Box.GetExtent().X;
-
-	//	FQuat WorldRotation = ControlledCharacter->ToolMesh->GetComponentQuat();
-
-	//	UE_LOG(LogTemp, Warning, TEXT("WorldRotation at: %s"), *WorldRotation.ToString());
-
-	//	FTransform BoxT = FTransform(
-	//		//박스의 로컬 회전값을 월드 회전값으로 변환
-	//		WorldRotation,
-	//		BoxPosition,
-	//		ControlledCharacter->ToolMesh->GetRelativeScale3D()
-	//	);
-	//	//FVector BoxPosition = T.GetLocation();
-	//	// 디버그
-
-	//	// 박스
-	//	// DrawDebugBox(const UWorld* InWorld, FVector const& Center, FVector const& Extent, FColor const& Color, bool bPersistentLines = false, float LifeTime = -1.f, uint8 DepthPriority = 0, float Thickness = 0.f) {}
-
-	//	// 라인
-	//	//DrawDebugLine(
-	//	//	GetWorld(),
-	//	//	Start,
-	//	//	Start+BoxPosition,
-	//	//	FColor::Red,   // 색상
-	//	//	false,         // 영구 표시 여부 (false면 일정 시간 후 사라짐)
-	//	//	5.0f,          // 지속 시간 (초)
-	//	//	0,             // 뎁스 우선순위 (디폴트 0)
-	//	//	2.0f           // 선 두께
-	//	//);
-
-	//	FHitResult HitResult;
-
-	//	FCollisionQueryParams	CollisionQueryParams;
-	//	CollisionQueryParams.AddIgnoredActor(this);
-	//	// 스프링암 카메라 위치
-	//	//최종 트레이스 Start = Tool 시작점  Tool의 끝 툴과 동일한 크기의 콜리전 체크 ㄱ 회전은 툴의 Wolrd회전값 가져오기
-	//	bool bHit = GetWorld()->SweepSingleByChannel(HitResult,
-
-	//		BoxT.GetLocation(), BoxT.GetLocation(),
-
-	//		//박스의 로컬 회전값을 월드 회전값으로 변환
-	//		BoxT.GetRotation(),
-
-	//		ECollisionChannel::ECC_GameTraceChannel1, //충돌 채널 설정
-	//		Box, CollisionQueryParams);
-
-	//	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
-	//	{
-	//		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
-	//		UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
-	//		//Location
-	//		TargetSculpture->DigSculpture(ControlledCharacter->ToolMesh, BoxT);
-	//	}
-
-	//	if (bHit)
-	//	{
-	//		DrawDebugBox(GetWorld(),
-	//			BoxPosition,
-	//			Box.GetExtent(),
-	//			WorldRotation,
-	//			FColor::Red, false, 5.0f);
-
-	//		UE_LOG(LogTemp, Warning, TEXT("Hit at: %s"), *HitResult.ImpactPoint.ToString());
-	//	}
-	//	else
-	//	{
-	//		DrawDebugBox(GetWorld(),
-	//			BoxPosition,
-	//			Box.GetExtent(),
-	//			WorldRotation,
-	//			FColor::Green, false, 5.0f);
-
-	//		UE_LOG(LogTemp, Warning, TEXT("BoxPosition at: %s"), *BoxPosition.ToString());
-	//		UE_LOG(LogTemp, Warning, TEXT("BoxRotation at: %s"), *WorldRotation.ToString());
-	//	}
-	//}
-
-	//Sculpture Painting Func
-	//{
-	//	FVector Start = ControlledCharacter->GetCamera()->GetComponentLocation();
-	//	FVector End = ControlledCharacter->GetCamera()->GetForwardVector() * 300.f;
-
-	//	FHitResult HitResult;
-	//	FCollisionQueryParams CollisionParams;
-	//	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1 , CollisionParams);
-
-	//	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
-	//	{
-	//		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
-	//		UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
-	//		//Location
-	//		FVector2D UV;
-	//		float BrushSize = 50.f;
-	//		FLinearColor BrushColor = FLinearColor(0, 0, 1, 1);
-
-	//		UGameplayStatics::FindCollisionUV(HitResult, 0, UV);
-
-	//		TargetSculpture->DrawBrush(T_Paint, BrushSize, UV, BrushColor);
-	//	}
-	//}
-
-
-	{
-		FVector Start = ControlledCharacter->GetCamera()->GetComponentLocation();
-		FVector End = ControlledCharacter->GetCamera()->GetForwardVector() * 300.f;
-
-		FHitResult HitResult;
-		FCollisionQueryParams CollisionParams;
-		GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
-
-		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ATestActor::StaticClass()))
-		{
-			ATestActor* TargetSculpture = Cast<ATestActor>(HitResult.GetActor());
-			UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
-			//Location
-			FVector2D UV;
-			float BrushSize = 50.f;
-			FLinearColor BrushColor = FLinearColor(0, 0, 1, 1);
-
-			UGameplayStatics::FindCollisionUV(HitResult, 0, UV);
-
-			TargetSculpture->DrawBrush(T_Paint, BrushSize, UV, BrushColor);
->>>>>>> origin/master
 		}
 	}
 }
