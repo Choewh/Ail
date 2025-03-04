@@ -1,0 +1,117 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Test/TestActor.h"
+
+#include "Kismet/KismetRenderingLibrary.h"
+#include "Kismet/KismetMaterialLibrary.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Engine/Canvas.h"
+
+// Sets default values
+ATestActor::ATestActor()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	MeshComponent->SetupAttachment(RootComponent);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/SculptureSystem/Tool/Cube.Cube'"));
+
+	if (MeshAsset.Succeeded())
+	{
+		MeshComponent->SetStaticMesh(MeshAsset.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Canvas(TEXT("/Script/Engine.Material'/Game/PaintingSystem/M_Canvas.M_Canvas'"));
+
+	if (Canvas.Succeeded())
+	{
+		M_Canvas = Canvas.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Brush(TEXT("/Script/Engine.Material'/Game/PaintingSystem/M_Brush.M_Brush'"));
+
+	if (Brush.Succeeded())
+	{
+		M_Brush = Brush.Object;
+	}
+
+	MeshComponent->SetCollisionProfileName(TEXT("Sculpture"));
+}
+
+// Called when the game starts or when spawned
+void ATestActor::BeginPlay()
+{
+	Super::BeginPlay();
+	RenderTargetInit();
+}
+
+void ATestActor::RenderTargetInit()
+{
+	{
+		RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 1024, 1024);
+		UKismetRenderingLibrary::ClearRenderTarget2D(GetWorld(), RenderTarget, FLinearColor(1, 1, 1, 1));
+	}
+
+	{
+		UMaterialInstanceDynamic* MaterialDynamicInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Canvas);
+		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget);
+		MeshComponent->SetMaterial(0, MaterialDynamicInstance);
+	}
+
+	{
+		BrushMaterial = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush);
+	}
+}
+
+void ATestActor::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+{
+	{
+		BrushMaterial->SetTextureParameterValue(TEXT("BrushTexture"), Cast<UTexture>(BrushTexture));
+		//BrushMaterial->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
+	}
+
+	{
+		UCanvas* Canvas;
+		FVector2D Size;
+		FDrawToRenderTargetContext Context;
+		UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(GetWorld(), RenderTarget, Canvas, Size, Context);
+
+		Size *= DrawLocation;
+		BrushSize /= 2.f;
+
+		FVector2D ScreenPositon = Size - BrushSize;
+
+		FVector2D ScreenSize = FVector2D(BrushSize, BrushSize);
+
+		DrawMaterial(Canvas, BrushMaterial, ScreenPositon, ScreenSize, FVector2D::ZeroVector);
+
+		UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
+	}
+}
+
+void ATestActor::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize, FVector2D CoordinatePosition, FVector2D CoordinateSize, float Rotation, FVector2D PivotPoint) const
+{
+	if (RenderMaterial
+		&& ScreenSize.X > 0.0f
+		&& ScreenSize.Y > 0.0f
+		// Canvas can be NULL if the user tried to draw after EndDrawCanvasToRenderTarget
+		&& Canvas)
+	{
+		FCanvasTileItem TileItem(ScreenPosition, RenderMaterial->GetRenderProxy(), ScreenSize, CoordinatePosition, CoordinatePosition + CoordinateSize);
+		TileItem.Rotation = FRotator(0, Rotation, 0);
+		TileItem.PivotPoint = PivotPoint;
+		TileItem.SetColor(Canvas->DrawColor);
+		Canvas->DrawItem(TileItem);
+	}
+}
+
+// Called every frame
+void ATestActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+

@@ -27,9 +27,33 @@ public:
 
 public:
 	virtual void DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform);
+<<<<<<< HEAD
 	
 	//제자리에 바꿔서 스태틱 매쉬 생성
 	virtual void ConvertMeshDynamicToStatic();
 
+=======
+	virtual void DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor);
+	//void RemoveConnectedMesh(FDynamicMesh3& Mesh, const FVector3d& Point);
+
+	virtual void ConvertMeshDynamicToStatic();
+private:
+	virtual void RenderTargetInit();
+
+	void							DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize,
+		FVector2D CoordinatePosition, FVector2D CoordinateSize = FVector2D::UnitVector, float Rotation = 0.f,
+		FVector2D PivotPoint = FVector2D(0.5f, 0.5f)) const;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* PaintingMeshComponent;
+
+	UMaterialInterface* M_Canvas;
+	UMaterialInterface* M_Brush;
+	UMaterialInstanceDynamic* BrushMaterial;
+
+	UTextureRenderTarget2D* RenderTarget;
+
+>>>>>>> origin/master
 };
 
