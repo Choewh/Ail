@@ -13,6 +13,9 @@
 
 #include "Kismet/KismetMathLibrary.h"
 #include "PaintingSystem/BaseDrawSculpture.h"
+#include "RenderResource.h"
+#include "RenderingThread.h"
+
 
 #include "Misc/Utils.h"
 
@@ -43,6 +46,7 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 
 	DynamicMeshComponent->SetComplexAsSimpleCollisionEnabled(true, true);
 	DynamicMeshComponent->SetCollisionProfileName(TEXT("Sculpture"));
+
 	Super::OnConstruction(Transform);
 }
 
@@ -88,12 +92,48 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 	{
 		return;
 	}
-	
+
+	// B 메시의 기존 UV 정보 저장
+	TArray<FVector2f> OriginalUVs;
+	{
+		FStaticMeshLODResources& LODResource = NewStaticMesh->GetRenderData()->LODResources[0];
+		const FStaticMeshVertexBuffer& VertexBuffer = LODResource.VertexBuffers.StaticMeshVertexBuffer;
+		OriginalUVs.SetNum(VertexBuffer.GetNumVertices());
+		for (uint32 i = 0; i < VertexBuffer.GetNumVertices(); i++)
+		{
+			OriginalUVs[i] = VertexBuffer.GetVertexUV(i, 0);
+		}
+	}
+
+
 	// 복사 작업 수행
 	FGeometryScriptCopyMeshToAssetOptions Options;
+	Options.bUseOriginalVertexOrder = true;
 	FGeometryScriptMeshWriteLOD TargetLOD;
+	TargetLOD.bWriteHiResSource = true;
 	EGeometryScriptOutcomePins Outcome;
 	UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshToStaticMesh(DynamicMesh, NewStaticMesh, Options, TargetLOD, Outcome);
+
+	{
+		if (!NewStaticMesh || OriginalUVs.Num() == 0) return;
+
+		FStaticMeshLODResources& LODResource = NewStaticMesh->GetRenderData()->LODResources[0];
+		FStaticMeshVertexBuffer& VertexBuffer = LODResource.VertexBuffers.StaticMeshVertexBuffer;
+
+		for (uint32 i = 0; i < VertexBuffer.GetNumVertices(); i++)
+		{
+			VertexBuffer.SetVertexUV(i, 0, OriginalUVs[i]);
+		}
+
+		// GPU 리소스 업데이트
+		BeginUpdateResourceRHI(&VertexBuffer);
+	}
+
+	NewStaticMesh->Modify();
+	NewStaticMesh->PostEditChange();
+	NewStaticMesh->MarkPackageDirty();
+
+	NewPaintingActor->RenderTargetInit();
 
 	// 위치 조정
 	//FVector BoundsExtent = NewPaintingActor->MeshComponent->Bounds.BoxExtent;

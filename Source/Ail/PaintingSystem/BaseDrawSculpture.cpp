@@ -45,7 +45,6 @@ ABaseDrawSculpture::ABaseDrawSculpture()
 void ABaseDrawSculpture::BeginPlay()
 {
 	Super::BeginPlay();
-	RenderTargetInit();
 }
 
 void ABaseDrawSculpture::RenderTargetInit()
@@ -57,27 +56,35 @@ void ABaseDrawSculpture::RenderTargetInit()
 
 	{
 		UMaterialInstanceDynamic* MaterialDynamicInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Canvas);
-		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget);
+		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget); //베이스 컬러
 		MeshComponent->SetMaterial(0, MaterialDynamicInstance);
 	}
 
 	{
-		BrushMaterialInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush,FName("BrushMaterialInstance"));
+		BrushMaterialInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush , FName("BrushMaterialInstance"));
 	}
 }
 
 //void ABaseDrawSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
-void ABaseDrawSculpture::DrawBrush(UTexture* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+void ABaseDrawSculpture::DrawBrush(float InBrushSize, FVector2D InDrawLocation, FLinearColor InBrushColor)
 {
-	if (!RenderTarget || !BrushMaterialInstance || !BrushTexture)
+	if (!RenderTarget || !BrushMaterialInstance)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Invalid RenderTarget, BrushMaterialInstance, or BrushTexture!"));
+		UE_LOG(LogTemp, Error, TEXT("Invalid RenderTarget, BrushMaterialInstance!"));
 		return;
 	}
 
 	// 브러시 텍스처 및 색상 설정
-	BrushMaterialInstance->SetTextureParameterValue(TEXT("BrushTexture"),BrushTexture);
-	//BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
+	//BrushMaterialInstance->SetTextureParameterValue(TEXT("BrushTexture"),BrushTexture);
+	//FLinearColor CurrentColor;
+	//if (BrushMaterialInstance->GetVectorParameterValue(TEXT("BrushColor"), CurrentColor))
+	//{
+		BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), InBrushColor);
+	/*}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Parameter 'BrushColor' not found in material!"));
+	}*/
 
 	UCanvas* Canvas;
 	FVector2D Size;
@@ -89,8 +96,8 @@ void ABaseDrawSculpture::DrawBrush(UTexture* BrushTexture, float BrushSize, FVec
 	if (Canvas)
 	{
 		// 캔버스 크기 기반으로 위치 계산
-		FVector2D ScreenSize = FVector2D(BrushSize, BrushSize);
-		FVector2D ScreenPosition = (Size * DrawLocation) - (BrushSize * 0.5f); // UV 좌표를 픽셀 좌표로 변환 중앙 정렬
+		FVector2D ScreenSize = FVector2D(InBrushSize, InBrushSize);
+		FVector2D ScreenPosition = (Size * InDrawLocation) - (InBrushSize * 0.5f); // UV 좌표를 픽셀 좌표로 변환 중앙 정렬
 		
 		// 브러시 그리기
 		Canvas->K2_DrawMaterial(BrushMaterialInstance, ScreenPosition, ScreenSize, FVector2D::ZeroVector);

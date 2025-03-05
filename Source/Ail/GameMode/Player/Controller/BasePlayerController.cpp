@@ -24,16 +24,6 @@ ABasePlayerController::ABasePlayerController()
 
 		IMC_Default = Asset.Object;
 	}
-
-	{
-		//static ConstructorHelpers::FObjectFinder<UTexture2D> Asset
-		static ConstructorHelpers::FObjectFinder<UTexture> Asset
-		{ TEXT("/Script/Engine.Texture2D'/Game/PaintingSystem/Black.Black'") };
-		check(Asset.Object);
-
-		T_Paint = Asset.Object;
-	}
-	//PlayerCameraManagerClass = ABasicPlayerCameraManager::StaticClass();
 }
 
 void ABasePlayerController::BeginPlay()
@@ -293,7 +283,7 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 
 			FVector2D UV;
 			float BrushSize = 50.f;
-			FLinearColor BrushColor = FLinearColor(0, 0, 1, 1);
+			FLinearColor BrushColor = FLinearColor(0, 1, 0, 1);
 			//
 			UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 			if (!HitComponent)
@@ -345,7 +335,7 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 			bool bUV = UGameplayStatics::FindCollisionUV(HitResult, 0, UV);
 			if (bUV)
 			{
-				TargetSculpture->DrawBrush(T_Paint, BrushSize, UV, BrushColor);
+				TargetSculpture->DrawBrush(BrushSize, UV, BrushColor);
 			}
 		}
 	}

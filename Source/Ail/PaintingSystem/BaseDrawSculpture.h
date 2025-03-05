@@ -10,21 +10,21 @@ UCLASS()
 class AIL_API ABaseDrawSculpture : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ABaseDrawSculpture();
 
 	//virtual void DrawBrush(UTexture2D* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
-	virtual void DrawBrush(UTexture* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
+	virtual void DrawBrush(float InBrushSize, FVector2D InDrawLocation, FLinearColor InBrushColor);
+	virtual void RenderTargetInit();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void RenderTargetInit();
 	void							DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize,
 		FVector2D CoordinatePosition, FVector2D CoordinateSize = FVector2D::UnitVector, float Rotation = 0.f,
 		FVector2D PivotPoint = FVector2D(0.5f, 0.5f)) const;
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UStaticMeshComponent* MeshComponent;

@@ -11,10 +11,8 @@ public class Ail : ModuleRules
         PublicDependencyModuleNames.AddRange(new string[] {
             "Core","CoreUObject","Engine","InputCore","EnhancedInput",
             "GeometryScriptingCore","GeometryFramework",//"GeometryProcessing" , //다이나믹 매쉬
+            "RHI", "RenderCore",
         });
-
-        PublicDependencyModuleNames.Add("GeometryCore");
-
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
 
