@@ -4,7 +4,7 @@
 #include "AilCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/HUD.h"
-#include "SculptureSystem/Player/Controller/BasePlayerController.h"
+#include "GameMode/Player/Controller/BasePlayerController.h"
 
 AAilGameMode::AAilGameMode()
 {

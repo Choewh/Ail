@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PaintingSystem/TestActor.h"
+#include "PaintingSystem/BaseDrawSculpture.h"
 
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetMaterialLibrary.h"
@@ -9,12 +9,12 @@
 #include "Engine/Canvas.h"
 
 // Sets default values
-ATestActor::ATestActor()
+ABaseDrawSculpture::ABaseDrawSculpture()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/PaintingSystem/Cube.Cube'"));
@@ -42,13 +42,13 @@ ATestActor::ATestActor()
 }
 
 // Called when the game starts or when spawned
-void ATestActor::BeginPlay()
+void ABaseDrawSculpture::BeginPlay()
 {
 	Super::BeginPlay();
 	RenderTargetInit();
 }
 
-void ATestActor::RenderTargetInit()
+void ABaseDrawSculpture::RenderTargetInit()
 {
 	{
 		RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 1024, 1024);
@@ -62,21 +62,22 @@ void ATestActor::RenderTargetInit()
 	}
 
 	{
-		BrushMaterial = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush);
+		BrushMaterialInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush,FName("BrushMaterialInstance"));
 	}
 }
 
-void ATestActor::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+//void ABaseDrawSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+void ABaseDrawSculpture::DrawBrush(UTexture* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
 {
-	if (!RenderTarget || !BrushMaterial || !BrushTexture)
+	if (!RenderTarget || !BrushMaterialInstance || !BrushTexture)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Invalid RenderTarget, BrushMaterial, or BrushTexture!"));
+		UE_LOG(LogTemp, Error, TEXT("Invalid RenderTarget, BrushMaterialInstance, or BrushTexture!"));
 		return;
 	}
 
 	// 브러시 텍스처 및 색상 설정
-	BrushMaterial->SetTextureParameterValue(TEXT("BrushTexture"), Cast<UTexture>(BrushTexture));
-	//BrushMaterial->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
+	BrushMaterialInstance->SetTextureParameterValue(TEXT("BrushTexture"),BrushTexture);
+	//BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
 
 	UCanvas* Canvas;
 	FVector2D Size;
@@ -92,7 +93,7 @@ void ATestActor::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D 
 		FVector2D ScreenPosition = (Size * DrawLocation) - (BrushSize * 0.5f); // UV 좌표를 픽셀 좌표로 변환 중앙 정렬
 		
 		// 브러시 그리기
-		Canvas->K2_DrawMaterial(BrushMaterial, ScreenPosition, ScreenSize, FVector2D::ZeroVector);
+		Canvas->K2_DrawMaterial(BrushMaterialInstance, ScreenPosition, ScreenSize, FVector2D::ZeroVector);
 
 		UE_LOG(LogTemp, Warning, TEXT("Drawing Brush at Location: %s"), *ScreenPosition.ToString());
 	}
@@ -105,7 +106,7 @@ void ATestActor::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D 
 	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
 }
 
-void ATestActor::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize, FVector2D CoordinatePosition, FVector2D CoordinateSize, float Rotation, FVector2D PivotPoint) const
+void ABaseDrawSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize, FVector2D CoordinatePosition, FVector2D CoordinateSize, float Rotation, FVector2D PivotPoint) const
 {
 	if (RenderMaterial
 		&& ScreenSize.X > 0.0f
@@ -122,7 +123,7 @@ void ATestActor::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMateria
 }
 
 // Called every frame
-void ATestActor::Tick(float DeltaTime)
+void ABaseDrawSculpture::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

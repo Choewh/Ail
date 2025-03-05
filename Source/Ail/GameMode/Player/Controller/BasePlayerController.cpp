@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "SculptureSystem/Player/Controller/BasePlayerController.h"
-#include "BasePlayerCharacter.h"
+#include "BasePlayerController.h"
+#include "GameMode/Player/Character/BasePlayerCharacter.h"
 #include "SculptureSystem/BaseSculpture.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -13,7 +13,7 @@
 
 #include "DrawDebugHelpers.h"
 
-#include "PaintingSystem/TestActor.h"
+#include "PaintingSystem/BaseDrawSculpture.h"
 #include "BodySetupCore.h"
 ABasePlayerController::ABasePlayerController()
 {
@@ -26,7 +26,8 @@ ABasePlayerController::ABasePlayerController()
 	}
 
 	{
-		static ConstructorHelpers::FObjectFinder<UTexture2D> Asset
+		//static ConstructorHelpers::FObjectFinder<UTexture2D> Asset
+		static ConstructorHelpers::FObjectFinder<UTexture> Asset
 		{ TEXT("/Script/Engine.Texture2D'/Game/PaintingSystem/Black.Black'") };
 		check(Asset.Object);
 
@@ -284,9 +285,9 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 		CollisionParams.bReturnFaceIndex = true;
 		GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 
-		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ATestActor::StaticClass()))
+		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseDrawSculpture::StaticClass()))
 		{
-			ATestActor* TargetSculpture = Cast<ATestActor>(HitResult.GetActor());
+			ABaseDrawSculpture* TargetSculpture = Cast<ABaseDrawSculpture>(HitResult.GetActor());
 			UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
 			//Location
 

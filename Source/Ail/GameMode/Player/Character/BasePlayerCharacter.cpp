@@ -8,6 +8,8 @@
 #include "Components/PostProcessComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Misc/Utils.h"
+
 // Sets default values
 ABasePlayerCharacter::ABasePlayerCharacter()
 {
@@ -55,6 +57,8 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 void ABasePlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	//Temp
+	FUtils::ChangeSupportUVFromHitResults(false);
 }
 
 void ABasePlayerCharacter::OnConstruction(const FTransform& Transform)

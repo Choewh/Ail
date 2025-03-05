@@ -5,6 +5,7 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "PhysicsEngine/PhysicsSettings.h"
 
 
 namespace CollisionProfileName
@@ -19,11 +20,6 @@ namespace SocketName
 {
 	static inline FName Weapon = TEXT("Weapon");
 	static inline FName Muzzle = TEXT("Muzzle"); // 총구
-}
-
-namespace MF_PostEffect
-{
-	static inline FName PaperBurnDissolve = TEXT("PaperBurnDissolve");
 }
 
 class FUtils
@@ -41,5 +37,21 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	static const bool ChangeSupportUVFromHitResults(bool bSupportUVFromHitResult)
+	{
+		//인풋의 반댓값
+		bool Result = !bSupportUVFromHitResult;
+		UPhysicsSettings* PhysicsSettings = GetMutableDefault<UPhysicsSettings>();
+		PhysicsSettings->bSupportUVFromHitResults = bSupportUVFromHitResult;
+		Result = PhysicsSettings->bSupportUVFromHitResults;
+		if (Result == bSupportUVFromHitResult)
+		{
+			FPropertyChangedEvent PropertyChangedEvent(UPhysicsSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UPhysicsSettings, bSupportUVFromHitResults)));
+			PhysicsSettings->PostEditChangeProperty(PropertyChangedEvent);
+			PhysicsSettings->SaveConfig();
+		}
+		return Result;
 	}
 };

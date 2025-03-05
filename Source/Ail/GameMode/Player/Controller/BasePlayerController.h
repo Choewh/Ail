@@ -40,5 +40,6 @@ protected:
 
 protected:
 	UInputMappingContext* IMC_Default = nullptr;
-	UTexture2D* T_Paint = nullptr;
+	//UTexture2D* T_Paint = nullptr;
+	UTexture* T_Paint = nullptr;
 };

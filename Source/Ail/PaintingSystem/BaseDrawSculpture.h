@@ -4,18 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "TestActor.generated.h"
+#include "BaseDrawSculpture.generated.h"
 
 UCLASS()
-class AIL_API ATestActor : public AActor
+class AIL_API ABaseDrawSculpture : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ATestActor();
+	ABaseDrawSculpture();
 
-	virtual void DrawBrush(UTexture2D* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
+	//virtual void DrawBrush(UTexture2D* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
+	virtual void DrawBrush(UTexture* BurshTexture, float BurshSize, FVector2D DrawLocation, FLinearColor BrushColor);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -29,7 +30,7 @@ public:
 	UStaticMeshComponent* MeshComponent;
 	UMaterialInterface* M_Canvas;
 	UMaterialInterface* M_Brush;
-	UMaterialInstanceDynamic* BrushMaterial;
+	UMaterialInstanceDynamic* BrushMaterialInstance;
 
 	UTextureRenderTarget2D* RenderTarget;
 };

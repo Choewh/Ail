@@ -12,7 +12,9 @@
 #include "GeometryScript/MeshRepairFunctions.h"
 
 #include "Kismet/KismetMathLibrary.h"
-#include "PaintingSystem/TestActor.h"
+#include "PaintingSystem/BaseDrawSculpture.h"
+
+#include "Misc/Utils.h"
 
 
 
@@ -59,9 +61,15 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 
 	UDynamicMesh* DynamicMesh = DynamicMeshComponent->GetDynamicMesh();
 
+	if (!DynamicMesh)
+	{
+		return;
+	}
+
 	// 새로운 액터 생성
 	FActorSpawnParameters SpawnParams;
-	ATestActor* NewPaintingActor = GetWorld()->SpawnActor<ATestActor>(ATestActor::StaticClass(), FTransform::Identity, SpawnParams);
+	FTransform NewTransform = GetActorTransform();
+	ABaseDrawSculpture* NewPaintingActor = GetWorld()->SpawnActor<ABaseDrawSculpture>(ABaseDrawSculpture::StaticClass(), NewTransform, SpawnParams);
 	if (!NewPaintingActor)
 	{
 		return;
@@ -74,6 +82,13 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 		return;
 	}
 
+	//여기서 UV 힛 설정해주기
+	//설정후 성공적으로 바꼈는지 확인후 넘어가기.
+	if (!FUtils::ChangeSupportUVFromHitResults(true))
+	{
+		return;
+	}
+	
 	// 복사 작업 수행
 	FGeometryScriptCopyMeshToAssetOptions Options;
 	FGeometryScriptMeshWriteLOD TargetLOD;
@@ -81,8 +96,8 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 	UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshToStaticMesh(DynamicMesh, NewStaticMesh, Options, TargetLOD, Outcome);
 
 	// 위치 조정
-	FVector BoundsExtent = NewPaintingActor->MeshComponent->Bounds.BoxExtent;
-	NewPaintingActor->MeshComponent->SetRelativeLocation(FVector(0.f, 0.f, BoundsExtent.Z));
+	//FVector BoundsExtent = NewPaintingActor->MeshComponent->Bounds.BoxExtent;
+	//NewPaintingActor->MeshComponent->SetRelativeLocation(FVector(0.f, 0.f, BoundsExtent.Z));
 
 	// 가시성 조정
 	DynamicMeshComponent->SetVisibility(false);
