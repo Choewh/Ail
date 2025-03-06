@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GeometryActors/GeneratedDynamicMeshActor.h"
-#include "BaseSculpture.generated.h"
+#include "Sculpture.generated.h"
 
 /**
  * 
@@ -13,12 +13,12 @@
 class UTextureRenderTarget2D;
 
 UCLASS()
-class AIL_API ABaseSculpture : public AGeneratedDynamicMeshActor
+class AIL_API ASculpture : public AGeneratedDynamicMeshActor
 {
 	GENERATED_BODY()
 
 public:
-	ABaseSculpture();
+	ASculpture();
 
 public:
 	virtual void BeginPlay();

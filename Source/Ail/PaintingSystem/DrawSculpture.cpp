@@ -1,15 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PaintingSystem/BaseDrawSculpture.h"
+#include "DrawSculpture.h"
 
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetMaterialLibrary.h"
 #include "Engine/TextureRenderTarget2D.h"
+
+#include "PhysicsEngine/PhysicsAsset.h"
+#include "PhysicsCore.h"
+//Interface_CollisionDataProviderCore.h	"
+
 #include "Engine/Canvas.h"
 
 // Sets default values
-ABaseDrawSculpture::ABaseDrawSculpture()
+ADrawSculpture::ADrawSculpture()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -42,12 +47,19 @@ ABaseDrawSculpture::ABaseDrawSculpture()
 }
 
 // Called when the game starts or when spawned
-void ABaseDrawSculpture::BeginPlay()
+void ADrawSculpture::BeginPlay()
 {
 	Super::BeginPlay();
+	//RenderTargetInit();
 }
 
-void ABaseDrawSculpture::RenderTargetInit()
+void ADrawSculpture::Serialize(FArchive& Ar)
+{
+	Super::Serialize(Ar);
+
+}
+
+void ADrawSculpture::RenderTargetInit()
 {
 	{
 		RenderTarget = UKismetRenderingLibrary::CreateRenderTarget2D(GetWorld(), 1024, 1024);
@@ -58,15 +70,75 @@ void ABaseDrawSculpture::RenderTargetInit()
 		UMaterialInstanceDynamic* MaterialDynamicInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Canvas);
 		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget); //베이스 컬러
 		MeshComponent->SetMaterial(0, MaterialDynamicInstance);
-	}
 
+		UBodySetup* BodySetup = MeshComponent->GetBodySetup();
+		BodySetup->ClearPhysicsMeshes();
+		//Temp
+		UStaticMesh* OwnerStaticMesh = MeshComponent->GetStaticMesh();
+		FTriMeshCollisionData CollisionData;
+		if (OwnerStaticMesh->ContainsPhysicsTriMeshData(true))
+		{
+			OwnerStaticMesh->GetPhysicsTriMeshData(&CollisionData, true);
+		}
+		FillFromTriMesh(CollisionData, BodySetup->UVInfo);
+		int32 UVChannel = 0;
+		FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
+		// UV 채널 유효성 검사
+		if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
+		}
+		//}
+
+	}
 	{
-		BrushMaterialInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush , FName("BrushMaterialInstance"));
+		BrushMaterialInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), M_Brush, FName("BrushMaterialInstance"));
 	}
 }
 
-//void ABaseDrawSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
-void ABaseDrawSculpture::DrawBrush(float InBrushSize, FVector2D InDrawLocation, FLinearColor InBrushColor)
+void ADrawSculpture::FillFromTriMesh(const FTriMeshCollisionData& TriangleMeshDesc, FBodySetupUVInfo& UVInfo)
+{
+	// Store index buffer
+	const int32 NumVerts = TriangleMeshDesc.Vertices.Num();
+	const int32 NumTris = TriangleMeshDesc.Indices.Num();
+	UVInfo.IndexBuffer.Empty();
+	UVInfo.IndexBuffer.AddUninitialized(NumTris * 3);
+	for (int32 TriIdx = 0; TriIdx < TriangleMeshDesc.Indices.Num(); TriIdx++)
+	{
+		UVInfo.IndexBuffer[TriIdx * 3 + 0] = TriangleMeshDesc.Indices[TriIdx].v0;
+		UVInfo.IndexBuffer[TriIdx * 3 + 1] = TriangleMeshDesc.Indices[TriIdx].v1;
+		UVInfo.IndexBuffer[TriIdx * 3 + 2] = TriangleMeshDesc.Indices[TriIdx].v2;
+	}
+
+	// Store vertex positions
+	UVInfo.VertPositions.Empty();
+	UVInfo.VertPositions.AddUninitialized(NumVerts);
+	for (int32 VertIdx = 0; VertIdx < TriangleMeshDesc.Vertices.Num(); VertIdx++)
+	{
+		UVInfo.VertPositions[VertIdx] = FVector3d(TriangleMeshDesc.Vertices[VertIdx]);
+	}
+
+	// Copy UV channels (checking they are correct size)
+	for (int32 UVIndex = 0; UVIndex < TriangleMeshDesc.UVs.Num(); UVIndex++)
+	{
+		if (TriangleMeshDesc.UVs[UVIndex].Num() == NumVerts)
+		{
+			UVInfo.VertUVs.Add(TriangleMeshDesc.UVs[UVIndex]);
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+void ADrawSculpture::PostLoad()
+{
+	Super::PostLoad();
+}
+
+//void ADrawSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+void ADrawSculpture::DrawBrush(float InBrushSize, FVector2D InDrawLocation, FLinearColor InBrushColor)
 {
 	if (!RenderTarget || !BrushMaterialInstance)
 	{
@@ -79,7 +151,7 @@ void ABaseDrawSculpture::DrawBrush(float InBrushSize, FVector2D InDrawLocation, 
 	//FLinearColor CurrentColor;
 	//if (BrushMaterialInstance->GetVectorParameterValue(TEXT("BrushColor"), CurrentColor))
 	//{
-		BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), InBrushColor);
+	BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), InBrushColor);
 	/*}
 	else
 	{
@@ -98,7 +170,7 @@ void ABaseDrawSculpture::DrawBrush(float InBrushSize, FVector2D InDrawLocation, 
 		// 캔버스 크기 기반으로 위치 계산
 		FVector2D ScreenSize = FVector2D(InBrushSize, InBrushSize);
 		FVector2D ScreenPosition = (Size * InDrawLocation) - (InBrushSize * 0.5f); // UV 좌표를 픽셀 좌표로 변환 중앙 정렬
-		
+
 		// 브러시 그리기
 		Canvas->K2_DrawMaterial(BrushMaterialInstance, ScreenPosition, ScreenSize, FVector2D::ZeroVector);
 
@@ -113,7 +185,7 @@ void ABaseDrawSculpture::DrawBrush(float InBrushSize, FVector2D InDrawLocation, 
 	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
 }
 
-void ABaseDrawSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize, FVector2D CoordinatePosition, FVector2D CoordinateSize, float Rotation, FVector2D PivotPoint) const
+void ADrawSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMaterial, FVector2D ScreenPosition, FVector2D ScreenSize, FVector2D CoordinatePosition, FVector2D CoordinateSize, float Rotation, FVector2D PivotPoint) const
 {
 	if (RenderMaterial
 		&& ScreenSize.X > 0.0f
@@ -130,9 +202,8 @@ void ABaseDrawSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* Rende
 }
 
 // Called every frame
-void ABaseDrawSculpture::Tick(float DeltaTime)
+void ADrawSculpture::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

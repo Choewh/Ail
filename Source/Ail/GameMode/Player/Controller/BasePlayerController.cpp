@@ -2,7 +2,6 @@
 
 #include "BasePlayerController.h"
 #include "GameMode/Player/Character/BasePlayerCharacter.h"
-#include "SculptureSystem/BaseSculpture.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
@@ -13,8 +12,9 @@
 
 #include "DrawDebugHelpers.h"
 
-#include "PaintingSystem/BaseDrawSculpture.h"
-#include "BodySetupCore.h"
+#include "SculptureSystem/Sculpture.h"
+#include "PaintingSystem/DrawSculpture.h"
+
 ABasePlayerController::ABasePlayerController()
 {
 	{
@@ -116,9 +116,9 @@ void ABasePlayerController::OnTest(const FInputActionValue& InputActionValue)
 	FCollisionQueryParams CollisionParams;
 	GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 
-	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+	if (HitResult.GetActor() && HitResult.GetActor()->IsA(ASculpture::StaticClass()))
 	{
-		ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+		ASculpture* TargetSculpture = Cast<ASculpture>(HitResult.GetActor());
 		UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
 		//Location
 		FVector2D UV;
@@ -164,7 +164,7 @@ void ABasePlayerController::OnUpDown(const FInputActionValue& InputActionValue)
 void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValue)
 {
 	ABasePlayerCharacter* ControlledCharacter = Cast<ABasePlayerCharacter>(GetCharacter());
-	//Sculpture Dig Func
+	//ASculpture Dig Func
 	{
 
 		// 툴의 정보를 토대로 콜리전을 생성함
@@ -226,9 +226,9 @@ void ABasePlayerController::OnLeftClick(const FInputActionValue& InputActionValu
 			ECollisionChannel::ECC_GameTraceChannel1, //충돌 채널 설정
 			Box, CollisionQueryParams);
 
-		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseSculpture::StaticClass()))
+		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ASculpture::StaticClass()))
 		{
-			ABaseSculpture* TargetSculpture = Cast<ABaseSculpture>(HitResult.GetActor());
+			ASculpture* TargetSculpture = Cast<ASculpture>(HitResult.GetActor());
 			UE_LOG(LogTemp, Warning, TEXT("HitSculpture!"));
 			//Location
 			TargetSculpture->DigSculpture(ControlledCharacter->ToolMesh, BoxT);
@@ -275,24 +275,32 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 		CollisionParams.bReturnFaceIndex = true;
 		GetWorld()->LineTraceSingleByChannel(HitResult, Start, Start + End, ECollisionChannel::ECC_GameTraceChannel1, CollisionParams);
 
-		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ABaseDrawSculpture::StaticClass()))
+		if (HitResult.GetActor() && HitResult.GetActor()->IsA(ADrawSculpture::StaticClass()))
 		{
-			ABaseDrawSculpture* TargetSculpture = Cast<ABaseDrawSculpture>(HitResult.GetActor());
+			ADrawSculpture* TargetSculpture = Cast<ADrawSculpture>(HitResult.GetActor());
 			UE_LOG(LogTemp, Warning, TEXT("DrawBrush"));
 			//Location
-
-			FVector2D UV;
-			float BrushSize = 50.f;
-			FLinearColor BrushColor = FLinearColor(0, 1, 0, 1);
-			//
-			UPrimitiveComponent* HitComponent = HitResult.GetComponent();
-			if (!HitComponent)
+			if (!TargetSculpture->MeshComponent->GetStaticMesh()
+				->GetMeshDescription(0))  // UV 채널이 존재하는지 확인
 			{
-				UE_LOG(LogTemp, Error, TEXT("HitComponent is NULL"));
+				UE_LOG(LogTemp, Error, TEXT("LODIndex(0) is NULL"));
 				return;
 			}
 
-			UBodySetup* BodySetup = HitComponent->GetBodySetup();
+			UStaticMeshComponent* TargetStaticMeshComponent = TargetSculpture->MeshComponent;
+
+			FVector2D UVPosition;
+			float BrushSize = 50.f;
+			FLinearColor BrushColor = FLinearColor(0, 1, 0, 1);
+			//
+			if (!TargetStaticMeshComponent)
+			{
+				UE_LOG(LogTemp, Error, TEXT("TargetStaticMeshComponent is NULL"));
+				return;
+			}
+
+			
+			UBodySetup* BodySetup = TargetStaticMeshComponent->GetBodySetup();
 			if (!BodySetup)
 			{
 				UE_LOG(LogTemp, Error, TEXT("BodySetup is NULL"));
@@ -309,16 +317,15 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 
 			// UV 정보 가져오기
 			int32 UVChannel = 0;
-			UPrimitiveComponent* HitPrimComp = HitResult.Component.Get();
 			FBodySetupUVInfo FUVInfo;
 			FUVInfo = BodySetup->UVInfo;
+
 			// UV 채널 유효성 검사
 			if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
 			{
-				UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
+				UE_LOG(LogTemp, Error, TEXT("FUVInfo is Null"));
 				return;
 			}
-
 			// FaceIndex가 유효한지 검사
 			int32 MaxFaceIndex = FUVInfo.IndexBuffer.Num() / 3;
 			if (FaceIndex < 0 || FaceIndex >= MaxFaceIndex)
@@ -328,14 +335,14 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 			}
 
 			// UV 좌표 출력
-			UV = FUVInfo.VertUVs[0][UVChannel];
-			UE_LOG(LogTemp, Warning, TEXT("UV Coordinates: X = %f, Y = %f"), UV.X, UV.Y);
+			UVPosition = FUVInfo.VertUVs[0][UVChannel];
+			UE_LOG(LogTemp, Warning, TEXT("UV Coordinates: X = %f, Y = %f"), UVPosition.X, UVPosition.Y);
 
-			//
-			bool bUV = UGameplayStatics::FindCollisionUV(HitResult, 0, UV);
+			
+			bool bUV = UGameplayStatics::FindCollisionUV(HitResult, 0, UVPosition);
 			if (bUV)
 			{
-				TargetSculpture->DrawBrush(BrushSize, UV, BrushColor);
+				TargetSculpture->DrawBrush(BrushSize, UVPosition, BrushColor);
 			}
 		}
 	}

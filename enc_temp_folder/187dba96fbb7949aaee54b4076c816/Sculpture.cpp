@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "BaseSculpture.h"
+#include "Sculpture.h"
 #include "GeometryScript/MeshPrimitiveFunctions.h"
 #include "GeometryScript/MeshSubdivideFunctions.h"
 #include "GeometryScript/MeshBooleanFunctions.h"
@@ -10,22 +10,23 @@
 #include "GeometryScript/MeshQueryFunctions.h"
 #include "GeometryScript/MeshAssetFunctions.h"
 #include "GeometryScript/MeshRepairFunctions.h"
+#include "GeometryScript/MeshUVFunctions.h"
 
 #include "Kismet/KismetMathLibrary.h"
-#include "PaintingSystem/BaseDrawSculpture.h"
+#include "PaintingSystem/DrawSculpture.h"
 #include "RenderResource.h"
 #include "RenderingThread.h"
 
-
 #include "Misc/Utils.h"
 
+using namespace UE::Geometry;
 
 
-ABaseSculpture::ABaseSculpture()
+ASculpture::ASculpture()
 {
 }
 
-void ABaseSculpture::OnConstruction(const FTransform& Transform)
+void ASculpture::OnConstruction(const FTransform& Transform)
 {
 	UDynamicMesh* DynamicMesh = DynamicMeshComponent->GetDynamicMesh();
 
@@ -50,13 +51,13 @@ void ABaseSculpture::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 }
 
-void ABaseSculpture::BeginPlay()
+void ASculpture::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 //TODO 실행되면 제자리에 복사해서 스태틱매쉬 생성해주기 바꿔주기
-void ABaseSculpture::ConvertMeshDynamicToStatic()
+void ASculpture::ConvertMeshDynamicToStatic()
 {
 	if (!DynamicMeshComponent || !DynamicMeshComponent->GetDynamicMesh())
 	{
@@ -73,7 +74,7 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 	// 새로운 액터 생성
 	FActorSpawnParameters SpawnParams;
 	FTransform NewTransform = GetActorTransform();
-	ABaseDrawSculpture* NewPaintingActor = GetWorld()->SpawnActor<ABaseDrawSculpture>(ABaseDrawSculpture::StaticClass(), NewTransform, SpawnParams);
+	ADrawSculpture* NewPaintingActor = GetWorld()->SpawnActor<ADrawSculpture>(ADrawSculpture::StaticClass(), NewTransform, SpawnParams);
 	if (!NewPaintingActor)
 	{
 		return;
@@ -85,6 +86,51 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 	{
 		return;
 	}
+	{
+		//Temp
+		UBodySetup* BodySetup = DynamicMeshComponent->GetBodySetup();
+		{
+			int32 UVChannel = 0;
+			FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
+			// UV 채널 유효성 검사
+			if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
+			}
+		}
+	}
+	// 다이내믹 매쉬 정렬 후 언래핑
+	{
+		DynamicMesh->GetMeshPtr()->CompactInPlace();
+		FGeometryScriptXAtlasOptions XAtlasOptions;
+		DynamicMesh = UGeometryScriptLibrary_MeshUVFunctions::AutoGenerateXAtlasMeshUVs(DynamicMesh, 0, XAtlasOptions);
+
+
+		//Temp
+		UBodySetup* BodySetup = DynamicMeshComponent->GetBodySetup();
+		{
+			int32 UVChannel = 0;
+			FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
+			// UV 채널 유효성 검사
+			if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
+			}
+		}
+	}
+
+	{
+		// 복사 작업 수행
+		FGeometryScriptCopyMeshToAssetOptions CopyMeshToAssetOptions;
+		CopyMeshToAssetOptions.bUseOriginalVertexOrder = true;
+		FGeometryScriptMeshWriteLOD TargetLOD;
+		EGeometryScriptOutcomePins Outcome;
+		UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshToStaticMesh(DynamicMesh, NewStaticMesh, CopyMeshToAssetOptions, TargetLOD, Outcome);
+	}
+
+	NewPaintingActor->RenderTargetInit();
+	// 가시성 조정
+	DynamicMeshComponent->SetVisibility(false);
 
 	//여기서 UV 힛 설정해주기
 	//설정후 성공적으로 바꼈는지 확인후 넘어가기.
@@ -92,55 +138,6 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 	{
 		return;
 	}
-
-	// B 메시의 기존 UV 정보 저장
-	TArray<FVector2f> OriginalUVs;
-	{
-		FStaticMeshLODResources& LODResource = NewStaticMesh->GetRenderData()->LODResources[0];
-		const FStaticMeshVertexBuffer& VertexBuffer = LODResource.VertexBuffers.StaticMeshVertexBuffer;
-		OriginalUVs.SetNum(VertexBuffer.GetNumVertices());
-		for (uint32 i = 0; i < VertexBuffer.GetNumVertices(); i++)
-		{
-			OriginalUVs[i] = VertexBuffer.GetVertexUV(i, 0);
-		}
-	}
-
-
-	// 복사 작업 수행
-	FGeometryScriptCopyMeshToAssetOptions Options;
-	Options.bUseOriginalVertexOrder = true;
-	FGeometryScriptMeshWriteLOD TargetLOD;
-	TargetLOD.bWriteHiResSource = true;
-	EGeometryScriptOutcomePins Outcome;
-	UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshToStaticMesh(DynamicMesh, NewStaticMesh, Options, TargetLOD, Outcome);
-
-	{
-		if (!NewStaticMesh || OriginalUVs.Num() == 0) return;
-
-		FStaticMeshLODResources& LODResource = NewStaticMesh->GetRenderData()->LODResources[0];
-		FStaticMeshVertexBuffer& VertexBuffer = LODResource.VertexBuffers.StaticMeshVertexBuffer;
-
-		for (uint32 i = 0; i < VertexBuffer.GetNumVertices(); i++)
-		{
-			VertexBuffer.SetVertexUV(i, 0, OriginalUVs[i]);
-		}
-
-		// GPU 리소스 업데이트
-		BeginUpdateResourceRHI(&VertexBuffer);
-	}
-
-	NewStaticMesh->Modify();
-	NewStaticMesh->PostEditChange();
-	NewStaticMesh->MarkPackageDirty();
-
-	NewPaintingActor->RenderTargetInit();
-
-	// 위치 조정
-	//FVector BoundsExtent = NewPaintingActor->MeshComponent->Bounds.BoxExtent;
-	//NewPaintingActor->MeshComponent->SetRelativeLocation(FVector(0.f, 0.f, BoundsExtent.Z));
-
-	// 가시성 조정
-	DynamicMeshComponent->SetVisibility(false);
 
 	// 다이내믹 메시 액터 처리 (개발 단계에서는 삭제, 나중에 재활용 가능하도록 비활성 코드 주석 처리)
 	AActor* DynamicMeshOwner = DynamicMeshComponent->GetOwner();
@@ -157,7 +154,7 @@ void ABaseSculpture::ConvertMeshDynamicToStatic()
 }
 
 
-void ABaseSculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform)
+void ASculpture::DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform)
 {
 	// TODO 최적화 해보기
 	UDynamicMesh* ToolDynamicMesh = AllocateComputeMesh();
