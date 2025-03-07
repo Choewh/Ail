@@ -26,8 +26,11 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
+
+	UFUNCTION(BlueprintCallable, Category = "Sculpture")
 	virtual void DigSculpture(const UStaticMeshComponent* InMesh, const FTransform& InTransform);
 
 	//제자리에 바꿔서 스태틱 매쉬 생성
+	UFUNCTION(BlueprintCallable, Category = "Sculpture")
 	virtual void ConvertMeshDynamicToStatic();
 };
