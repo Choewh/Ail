@@ -16,12 +16,9 @@
 // Sets default values
 ADrawSculpture::ADrawSculpture()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	MeshComponent->SetGenerateOverlapEvents(true);
 	MeshComponent->SetupAttachment(RootComponent);
-
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/PaintingSystem/Cube.Cube'"));
 
 	if (MeshAsset.Succeeded())
@@ -50,7 +47,7 @@ ADrawSculpture::ADrawSculpture()
 void ADrawSculpture::BeginPlay()
 {
 	Super::BeginPlay();
-	//RenderTargetInit();
+	RenderTargetInit();
 }
 
 void ADrawSculpture::Serialize(FArchive& Ar)
@@ -71,24 +68,24 @@ void ADrawSculpture::RenderTargetInit()
 		MaterialDynamicInstance->SetTextureParameterValue(TEXT("RenderTarget"), RenderTarget); //베이스 컬러
 		MeshComponent->SetMaterial(0, MaterialDynamicInstance);
 
-		UBodySetup* BodySetup = MeshComponent->GetBodySetup();
-		BodySetup->ClearPhysicsMeshes();
-		//Temp
-		UStaticMesh* OwnerStaticMesh = MeshComponent->GetStaticMesh();
-		FTriMeshCollisionData CollisionData;
-		if (OwnerStaticMesh->ContainsPhysicsTriMeshData(true))
-		{
-			OwnerStaticMesh->GetPhysicsTriMeshData(&CollisionData, true);
-		}
-		FillFromTriMesh(CollisionData, BodySetup->UVInfo);
-		int32 UVChannel = 0;
-		FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
-		// UV 채널 유효성 검사
-		if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
-		{
-			UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
-		}
+		////Temp
+		//UBodySetup* BodySetup = MeshComponent->GetBodySetup();
+		//BodySetup->ClearPhysicsMeshes();
+		//UStaticMesh* OwnerStaticMesh = MeshComponent->GetStaticMesh();
+		//FTriMeshCollisionData CollisionData;
+		//if (OwnerStaticMesh->ContainsPhysicsTriMeshData(true))
+		//{
+		//	OwnerStaticMesh->GetPhysicsTriMeshData(&CollisionData, true);
 		//}
+		//FillFromTriMesh(CollisionData, BodySetup->UVInfo);
+		//int32 UVChannel = 0;
+		//FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
+		//// UV 채널 유효성 검사
+		//if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
+		//}
+		////}
 
 	}
 	{
@@ -130,11 +127,6 @@ void ADrawSculpture::FillFromTriMesh(const FTriMeshCollisionData& TriangleMeshDe
 			break;
 		}
 	}
-}
-
-void ADrawSculpture::PostLoad()
-{
-	Super::PostLoad();
 }
 
 //void ADrawSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
@@ -200,10 +192,3 @@ void ADrawSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* RenderMat
 		Canvas->DrawItem(TileItem);
 	}
 }
-
-// Called every frame
-void ADrawSculpture::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-

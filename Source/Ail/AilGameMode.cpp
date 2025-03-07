@@ -10,11 +10,12 @@ AAilGameMode::AAilGameMode()
 {
 	// set default pawn class to our Blueprinted character
 	//static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Script/Engine.Blueprint'/Game/SculptureSystem/BP_BasePlayer.BP_BasePlayer'"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Script/Engine.Blueprint'/Game/PaintingSystem/PaintingComponent/Demo/Blueprints/Characters/BP_Painter_Mannequin.BP_Painter_Mannequin_C'"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
-//		DefaultPawnClass = PlayerPawnBPClass.Class;
+		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
 	PlayerControllerClass =	ABasePlayerController::StaticClass();
 
 	static ConstructorHelpers::FClassFinder<AHUD> BaseHUD(TEXT("/Script/Engine.Blueprint'/Game/Blueprint/WBP_HUDBase.WBP_HUDBase_C'"));

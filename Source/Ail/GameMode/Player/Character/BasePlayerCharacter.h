@@ -19,7 +19,7 @@ public:
 	ABasePlayerCharacter();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
+	UCameraComponent* PlayerCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArm;
@@ -34,8 +34,10 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 public:	
 
-	UCameraComponent* GetCamera() { check(FollowCamera); return FollowCamera; }
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	UCameraComponent* GetCamera() { check(PlayerCamera); return PlayerCamera; }
 
+	UFUNCTION(BlueprintCallable, Category = "Player")
 	virtual void SetToolTransform(FTransform InTransform);
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -24,9 +24,9 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	PlayerCapsuleComponent->SetCapsuleSize(10.f, 10.f);
 
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(RootComponent);
-	FollowCamera->bUsePawnControlRotation = true; // Camera does not rotate relative to arm
+	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
+	PlayerCamera->SetupAttachment(RootComponent);
+	PlayerCamera->bUsePawnControlRotation = true; // Camera does not rotate relative to arm
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -81,7 +81,6 @@ void ABasePlayerCharacter::Tick(float DeltaTime)
 void ABasePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ABasePlayerCharacter::SetToolTransform(FTransform InTransform)

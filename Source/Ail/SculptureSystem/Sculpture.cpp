@@ -86,37 +86,12 @@ void ASculpture::ConvertMeshDynamicToStatic()
 	{
 		return;
 	}
+
 	{
-		//Temp
-		UBodySetup* BodySetup = DynamicMeshComponent->GetBodySetup();
-		{
-			int32 UVChannel = 0;
-			FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
-			// UV 채널 유효성 검사
-			if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
-			}
-		}
-	}
 	// 다이내믹 매쉬 정렬 후 언래핑
-	{
-		DynamicMesh->GetMeshPtr()->CompactInPlace();
+	/*	DynamicMesh->GetMeshPtr()->CompactInPlace();
 		FGeometryScriptXAtlasOptions XAtlasOptions;
-		DynamicMesh = UGeometryScriptLibrary_MeshUVFunctions::AutoGenerateXAtlasMeshUVs(DynamicMesh, 0, XAtlasOptions);
-
-
-		//Temp
-		UBodySetup* BodySetup = DynamicMeshComponent->GetBodySetup();
-		{
-			int32 UVChannel = 0;
-			FBodySetupUVInfo FUVInfo = BodySetup->UVInfo;
-			// UV 채널 유효성 검사
-			if (!FUVInfo.VertUVs.IsValidIndex(UVChannel))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Invalid UV Channel: %d (Max: %d)"), UVChannel, FUVInfo.VertUVs.Num());
-			}
-		}
+		DynamicMesh = UGeometryScriptLibrary_MeshUVFunctions::AutoGenerateXAtlasMeshUVs(DynamicMesh, 0, XAtlasOptions);*/
 	}
 
 	{
@@ -128,7 +103,6 @@ void ASculpture::ConvertMeshDynamicToStatic()
 		UGeometryScriptLibrary_StaticMeshFunctions::CopyMeshToStaticMesh(DynamicMesh, NewStaticMesh, CopyMeshToAssetOptions, TargetLOD, Outcome);
 	}
 
-	NewPaintingActor->RenderTargetInit();
 	// 가시성 조정
 	DynamicMeshComponent->SetVisibility(false);
 
