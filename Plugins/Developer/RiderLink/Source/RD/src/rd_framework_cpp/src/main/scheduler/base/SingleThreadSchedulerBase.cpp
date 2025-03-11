@@ -37,7 +37,7 @@ SingleThreadSchedulerBase::SingleThreadSchedulerBase(std::string name)
 
 void SingleThreadSchedulerBase::flush()
 {
-	RD_ASSERT_MSG(!is_active(), "Can't flush this scheduler in a reentrant way: we are inside queued item's execution");
+	RD_ASSERT_MSG(!is_active(), "Can't flush this scheduler in a reentrant way: we are inside queued Tool's execution");
 
 	while (tasks_executing != 0)
 	{

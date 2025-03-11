@@ -102,9 +102,9 @@ template <template <class, class> class C, typename T, typename A>
 std::string to_string(C<T, A> const& v)
 {
 	std::string res = "[";
-	for (const auto& item : v)
+	for (const auto& Tool : v)
 	{
-		res += to_string(item);
+		res += to_string(Tool);
 		res += ",";
 	}
 	res += "]";

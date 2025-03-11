@@ -45,8 +45,8 @@ void InternRoot::bind(Lifetime lf, IRdDynamic const* parent, string_view name) c
 	{
 		// if something's interned before bind
 		std::lock_guard<decltype(lock)> guard(lock);
-		my_items_lis.clear();
-		other_items_list.clear();
+		my_Tools_lis.clear();
+		other_Tools_list.clear();
 		inverse_map.clear();
 	}
 	get_protocol()->get_wire()->advise(lf, this);
@@ -65,7 +65,7 @@ void InternRoot::set_interned_correspondence(int32_t id, InternedAny&& value) co
 	RD_ASSERT_MSG(!is_index_owned(id), "Setting interned correspondence for object that we should have written, bug?")
 
 	std::lock_guard<decltype(lock)> guard(lock);
-	other_items_list[id / 2] = value;
+	other_Tools_list[id / 2] = value;
 	inverse_map[value] = id;
 }
 }	 // namespace rd

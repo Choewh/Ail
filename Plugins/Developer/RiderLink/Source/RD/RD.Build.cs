@@ -77,9 +77,9 @@ public class RD : ModuleRules
 			, "thirdparty/clsocket/src", "thirdparty/CTPL/include", "thirdparty/utf-cpp/include"
 		};
 
-		foreach (var Item in Paths)
+		foreach (var Tool in Paths)
 		{
-			PublicIncludePaths.Add(Path.Combine(ModuleDirectory, Item));
+			PublicIncludePaths.Add(Path.Combine(ModuleDirectory, Tool));
 		}
 	}
 }

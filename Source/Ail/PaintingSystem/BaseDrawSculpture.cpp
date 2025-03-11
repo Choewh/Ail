@@ -67,17 +67,17 @@ void ABaseDrawSculpture::RenderTargetInit()
 }
 
 //void ABaseDrawSculpture::DrawBrush(UTexture2D* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
-void ABaseDrawSculpture::DrawBrush(UTexture* BrushTexture, float BrushSize, FVector2D DrawLocation, FLinearColor BrushColor)
+void ABaseDrawSculpture::DrawBrush(UTexture* InBrushTexture, float InBrushSize, FVector2D InDrawLocation, FLinearColor InBrushColor)
 {
-	if (!RenderTarget || !BrushMaterialInstance || !BrushTexture)
+	if (!RenderTarget || !BrushMaterialInstance || !InBrushTexture)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Invalid RenderTarget, BrushMaterialInstance, or BrushTexture!"));
 		return;
 	}
 
 	// 브러시 텍스처 및 색상 설정
-	BrushMaterialInstance->SetTextureParameterValue(TEXT("BrushTexture"),BrushTexture);
-	//BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), BrushColor);
+	BrushMaterialInstance->SetTextureParameterValue(TEXT("BrushTexture"), InBrushTexture);
+	//BrushMaterialInstance->SetVectorParameterValue(TEXT("BrushColor"), InBrushColor);
 
 	UCanvas* Canvas;
 	FVector2D Size;
@@ -89,8 +89,8 @@ void ABaseDrawSculpture::DrawBrush(UTexture* BrushTexture, float BrushSize, FVec
 	if (Canvas)
 	{
 		// 캔버스 크기 기반으로 위치 계산
-		FVector2D ScreenSize = FVector2D(BrushSize, BrushSize);
-		FVector2D ScreenPosition = (Size * DrawLocation) - (BrushSize * 0.5f); // UV 좌표를 픽셀 좌표로 변환 중앙 정렬
+		FVector2D ScreenSize = FVector2D(InBrushSize, InBrushSize);
+		FVector2D ScreenPosition = (Size * InDrawLocation) - (InBrushSize * 0.5f); // UV 좌표를 픽셀 좌표로 변환 중앙 정렬
 		
 		// 브러시 그리기
 		Canvas->K2_DrawMaterial(BrushMaterialInstance, ScreenPosition, ScreenSize, FVector2D::ZeroVector);
@@ -114,11 +114,11 @@ void ABaseDrawSculpture::DrawMaterial(UCanvas* Canvas, UMaterialInterface* Rende
 		// Canvas can be NULL if the user tried to draw after EndDrawCanvasToRenderTarget
 		&& Canvas)
 	{
-		FCanvasTileItem TileItem(ScreenPosition, RenderMaterial->GetRenderProxy(), ScreenSize, CoordinatePosition, CoordinatePosition + CoordinateSize);
-		TileItem.Rotation = FRotator(0, Rotation, 0);
-		TileItem.PivotPoint = PivotPoint;
-		TileItem.SetColor(Canvas->DrawColor);
-		Canvas->DrawItem(TileItem);
+		FCanvasTileItem TileTool(ScreenPosition, RenderMaterial->GetRenderProxy(), ScreenSize, CoordinatePosition, CoordinatePosition + CoordinateSize);
+		TileTool.Rotation = FRotator(0, Rotation, 0);
+		TileTool.PivotPoint = PivotPoint;
+		TileTool.SetColor(Canvas->DrawColor);
+		Canvas->DrawItem(TileTool);
 	}
 }
 

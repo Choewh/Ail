@@ -589,12 +589,12 @@ int32_t CSimpleSocket::Writev(const struct iovec *pVector, size_t nCount)
 // Send() - Send data on a valid socket via a vector of buffers.
 //
 //------------------------------------------------------------------------------
-int32_t CSimpleSocket::Send(const struct iovec *sendVector, int32_t nNumItems)
+int32_t CSimpleSocket::Send(const struct iovec *sendVector, int32_t nNumTools)
 {
     SetSocketError(SocketSuccess);
     m_nBytesSent = 0;
 
-    if ((m_nBytesSent = WRITEV(m_socket, sendVector, nNumItems)) == CSimpleSocket::SocketError)
+    if ((m_nBytesSent = WRITEV(m_socket, sendVector, nNumTools)) == CSimpleSocket::SocketError)
     {
         TranslateSocketError();
     }

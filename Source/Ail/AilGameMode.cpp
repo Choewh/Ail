@@ -3,7 +3,7 @@
 #include "AilGameMode.h"
 #include "AilCharacter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "GameFramework/HUD.h"
+#include "GameMode/HUD/BaseHUD.h"
 #include "GameMode/Player/Controller/BasePlayerController.h"
 
 AAilGameMode::AAilGameMode()
@@ -17,9 +17,5 @@ AAilGameMode::AAilGameMode()
 	}
 	PlayerControllerClass =	ABasePlayerController::StaticClass();
 
-	static ConstructorHelpers::FClassFinder<AHUD> BaseHUD(TEXT("/Script/Engine.Blueprint'/Game/Blueprint/WBP_HUDBase.WBP_HUDBase_C'"));
-	if (BaseHUD.Class != NULL)
-	{
-		HUDClass = BaseHUD.Class;
-	}
+	HUDClass = ABaseHUD::StaticClass();
 }

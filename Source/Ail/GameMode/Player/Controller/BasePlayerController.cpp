@@ -318,7 +318,7 @@ void ABasePlayerController::OnRightClick(const FInputActionValue& InputActionVal
 			}
 
 			// UV 정보 가져오기
-			int32 UVChannel = 0;
+			int32 UVChannel = 1;
 			UPrimitiveComponent* HitPrimComp = HitResult.Component.Get();
 			FBodySetupUVInfo FUVInfo;
 			FUVInfo = BodySetup->UVInfo;

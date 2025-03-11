@@ -21,18 +21,18 @@ template<typename Mutex>
 class ringbuffer_sink final : public base_sink<Mutex>
 {
 public:
-    explicit ringbuffer_sink(size_t n_items)
-        : q_{n_items}
+    explicit ringbuffer_sink(size_t n_Tools)
+        : q_{n_Tools}
     {}
 
     std::vector<details::log_msg_buffer> last_raw(size_t lim = 0)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        auto items_available = q_.size();
-        auto n_items = lim > 0 ? (std::min)(lim, items_available) : items_available;
+        auto Tools_available = q_.size();
+        auto n_Tools = lim > 0 ? (std::min)(lim, Tools_available) : Tools_available;
         std::vector<details::log_msg_buffer> ret;
-        ret.reserve(n_items);
-        for (size_t i = (items_available - n_items); i < items_available; i++)
+        ret.reserve(n_Tools);
+        for (size_t i = (Tools_available - n_Tools); i < Tools_available; i++)
         {
             ret.push_back(q_.at(i));
         }
@@ -42,11 +42,11 @@ public:
     std::vector<std::string> last_formatted(size_t lim = 0)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        auto items_available = q_.size();
-        auto n_items = lim > 0 ? (std::min)(lim, items_available) : items_available;
+        auto Tools_available = q_.size();
+        auto n_Tools = lim > 0 ? (std::min)(lim, Tools_available) : Tools_available;
         std::vector<std::string> ret;
-        ret.reserve(n_items);
-        for (size_t i = (items_available - n_items); i < items_available; i++)
+        ret.reserve(n_Tools);
+        for (size_t i = (Tools_available - n_Tools); i < Tools_available; i++)
         {
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(q_.at(i), formatted);
