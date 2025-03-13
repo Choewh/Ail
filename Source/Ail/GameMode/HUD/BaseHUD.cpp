@@ -73,7 +73,7 @@ void ABaseHUD::Tick(float DeltaSeconds)
 		{
 			for (AActor* It : OverlappedDroppedTools)
 			{
-				AddDroppedTool(static_cast<ADroppedTool*>(It));
+				RemoveDroppedTool(static_cast<ADroppedTool*>(It));
 			}
 			OverlappedDroppedTools = MoveTemp(Temp);
 

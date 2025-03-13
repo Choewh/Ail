@@ -6,7 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Component/ToolChildActorComponent.h"
 #include "Misc/Utils.h"
 
 // Sets default values
@@ -35,20 +35,8 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	SpringArm->ProbeChannel = ECC_WorldStatic;
 	SpringArm->bUsePawnControlRotation = true;
 
-	ToolMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	ToolMesh->SetupAttachment(SpringArm);
-	ToolMesh->SetCollisionProfileName(TEXT("Guide"));
-
-	// 중앙을 BLocation에 맞추기
-
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/SculptureSystem/Tool/SculptureBox.SculptureBox'"));
-
-	if (MeshAsset.Succeeded())
-	{
-		ToolMesh->SetStaticMesh(MeshAsset.Object);
-		ToolMesh->bRenderCustomDepth = true;
-	}
-
+	ToolChildActorComponent = CreateDefaultSubobject<UToolChildActorComponent>(TEXT("ToolChildActorComponent"));
+	ToolChildActorComponent->SetupAttachment(SpringArm);
 }
 
 // Called when the game starts or when spawned
@@ -64,7 +52,6 @@ void ABasePlayerCharacter::OnConstruction(const FTransform& Transform)
 	//@TODO
 	//함수로 변경해서 UI에서 툴의 크기 조절 
 	//게임내 모델링 기능 추가 고려하기
-	ToolMesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	Super::OnConstruction(Transform);
 }
 

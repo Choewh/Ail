@@ -6,12 +6,12 @@
 // Sets default values
 ADroppedTool::ADroppedTool()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 ADroppedTool::ADroppedTool(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer.SetDefaultSubobjectClass<USphereComponent>(TEXT("Collider")))
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USphereComponent>(TEXT("Collider")))
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -29,7 +29,11 @@ ADroppedTool::ADroppedTool(const FObjectInitializer& ObjectInitializer)
 
 void ADroppedTool::UseTool(APlayerController* PC)
 {
-	UToolAction* ToolAction = nullptr;
+	/*if (DataTableRowHandle.IsNull()) { return; }
+	FDroppedToolTableRow* Data = DataTableRowHandle.GetRow<FDroppedToolTableRow>(TEXT("Item"));
+	if (!Data) { ensure(false); return; }*/
+	//Cast<UToolAction>(Data->ItemActionClass->GetDefaultObject());
+	UToolAction* ToolAction = Cast<UToolAction>(UToolAction::StaticClass()->GetDefaultObject());
 	TUniquePtr<UToolAction::FContext> Context = MakeUnique<UToolAction::FContext>();
 	Context->User = PC;
 	ToolAction->SetContext(MoveTemp(Context));
@@ -45,7 +49,7 @@ void ADroppedTool::OnConstruction(const FTransform& Transform)
 void ADroppedTool::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame

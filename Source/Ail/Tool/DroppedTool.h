@@ -43,5 +43,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
+
+protected:
+	//UPROPERTY(EditAnywhere, meta = (RowType = "/Script/KDT3D.DroppedItemTableRow"))
+	//FDataTableRowHandle DataTableRowHandle;
 	
 };

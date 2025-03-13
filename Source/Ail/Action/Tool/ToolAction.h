@@ -38,7 +38,7 @@ protected:
 };
 
 UCLASS()
-class AIL_API UToolction_Weapon : public UToolAction
+class AIL_API UToolAction_Tool : public UToolAction
 {
 	GENERATED_BODY()
 public:

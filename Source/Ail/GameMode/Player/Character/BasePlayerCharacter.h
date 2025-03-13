@@ -8,7 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
-
+class UToolChildActorComponent;
 UCLASS()
 class AIL_API ABasePlayerCharacter : public ACharacter
 {
@@ -23,6 +23,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* SpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UToolChildActorComponent* ToolChildActorComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ToolMesh;

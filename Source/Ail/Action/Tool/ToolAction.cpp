@@ -4,13 +4,15 @@
 #include "Action/Tool/ToolAction.h"
 #include "Component/ToolChildActorComponent.h"
 
-void UToolction_Weapon::Use()
+void UToolAction_Tool::Use()
 {
 	if (UWorld* World = Context->User->GetWorld())
 	{
 		APawn* Pawn = Context->User->GetPawn();
-		UToolChildActorComponent* Weapon = Pawn->GetComponentByClass<UToolChildActorComponent>();
-		check(Weapon);
+		UToolChildActorComponent* Tool = Pawn->GetComponentByClass<UToolChildActorComponent>();
+		check(Tool);
+
+		//Pawn 이 가지고있는 ActorComp 를 해당 모양으로 변경
 
 		//AWeaponBase* Weapon = World->SpawnActorDeferred<AWeaponBase>(AWeaponBase::StaticClass(),
 		//	FTransform::Identity, Pawn);

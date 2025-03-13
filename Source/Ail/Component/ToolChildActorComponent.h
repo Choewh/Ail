@@ -14,4 +14,8 @@ class AIL_API UToolChildActorComponent : public UChildActorComponent
 {
 	GENERATED_BODY()
 	
+	UToolChildActorComponent();
+
+public:
+	virtual void SetData();
 };
