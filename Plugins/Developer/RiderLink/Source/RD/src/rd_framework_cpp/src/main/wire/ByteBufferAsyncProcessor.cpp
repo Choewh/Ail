@@ -71,8 +71,8 @@ void ByteBufferAsyncProcessor::add_data(std::vector<Buffer::ByteArray>&& new_dat
 {
 	std::lock_guard<decltype(queue_lock)> guard(queue_lock);
 	std::move(new_data.begin(), new_data.end(), std::back_inserter(queue));
-	//		for (auto &&item : new_data) {
-	//			queue.emplace(std::move(item));
+	//		for (auto &&Tool : new_data) {
+	//			queue.emplace(std::move(Tool));
 	//		}
 }
 
@@ -95,8 +95,8 @@ bool ByteBufferAsyncProcessor::reprocess()
 		}
 		for (int i = 0; i < pending_queue.size(); ++i)
 		{
-			auto const& item = pending_queue[i];
-			if (!processor(item, current_seqn + i))
+			auto const& Tool = pending_queue[i];
+			if (!processor(Tool, current_seqn + i))
 			{
 				return false;
 			}

@@ -6,12 +6,12 @@ namespace rd
 namespace util
 {
 template <typename ContainerT, class _Pr>
-void erase_if(ContainerT& items, _Pr _Pred)
+void erase_if(ContainerT& Tools, _Pr _Pred)
 {
-	for (auto it = items.begin(); it != items.end();)
+	for (auto it = Tools.begin(); it != Tools.end();)
 	{
 		if (_Pred(it->second))
-			it = items.erase(it);
+			it = Tools.erase(it);
 		else
 			++it;
 	}

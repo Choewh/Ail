@@ -10,7 +10,9 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"GeometryScriptingEditor"
+				"GeometryScriptingEditor",
+				"CoreUObject",
+				"UMG"
 			]
 		}
 	],

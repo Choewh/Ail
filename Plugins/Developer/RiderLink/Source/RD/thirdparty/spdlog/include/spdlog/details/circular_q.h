@@ -12,7 +12,7 @@ namespace details {
 template<typename T>
 class circular_q
 {
-    size_t max_items_ = 0;
+    size_t max_Tools_ = 0;
     typename std::vector<T>::size_type head_ = 0;
     typename std::vector<T>::size_type tail_ = 0;
     size_t overrun_counter_ = 0;
@@ -24,9 +24,9 @@ public:
     // empty ctor - create a disabled queue with no elements allocated at all
     circular_q() = default;
 
-    explicit circular_q(size_t max_items)
-        : max_items_(max_items + 1) // one item is reserved as marker for full q
-        , v_(max_items_)
+    explicit circular_q(size_t max_Tools)
+        : max_Tools_(max_Tools + 1) // one Tool is reserved as marker for full q
+        , v_(max_Tools_)
     {}
 
     circular_q(const circular_q &) = default;
@@ -45,23 +45,23 @@ public:
         return *this;
     }
 
-    // push back, overrun (oldest) item if no room left
-    void push_back(T &&item)
+    // push back, overrun (oldest) Tool if no room left
+    void push_back(T &&Tool)
     {
-        if (max_items_ > 0)
+        if (max_Tools_ > 0)
         {
-            v_[tail_] = std::move(item);
-            tail_ = (tail_ + 1) % max_items_;
+            v_[tail_] = std::move(Tool);
+            tail_ = (tail_ + 1) % max_Tools_;
 
-            if (tail_ == head_) // overrun last item if full
+            if (tail_ == head_) // overrun last Tool if full
             {
-                head_ = (head_ + 1) % max_items_;
+                head_ = (head_ + 1) % max_Tools_;
                 ++overrun_counter_;
             }
         }
     }
 
-    // Return reference to the front item.
+    // Return reference to the front Tool.
     // If there are no elements in the container, the behavior is undefined.
     const T &front() const
     {
@@ -82,23 +82,23 @@ public:
         }
         else
         {
-            return max_items_ - (head_ - tail_);
+            return max_Tools_ - (head_ - tail_);
         }
     }
 
-    // Return const reference to item by index.
+    // Return const reference to Tool by index.
     // If index is out of range 0…size()-1, the behavior is undefined.
     const T &at(size_t i) const
     {
         assert(i < size());
-        return v_[(head_ + i) % max_items_];
+        return v_[(head_ + i) % max_Tools_];
     }
 
-    // Pop item from front.
+    // Pop Tool from front.
     // If there are no elements in the container, the behavior is undefined.
     void pop_front()
     {
-        head_ = (head_ + 1) % max_items_;
+        head_ = (head_ + 1) % max_Tools_;
     }
 
     bool empty() const
@@ -109,9 +109,9 @@ public:
     bool full() const
     {
         // head is ahead of the tail by 1
-        if (max_items_ > 0)
+        if (max_Tools_ > 0)
         {
-            return ((tail_ + 1) % max_items_) == head_;
+            return ((tail_ + 1) % max_Tools_) == head_;
         }
         return false;
     }
@@ -125,14 +125,14 @@ private:
     // copy from other&& and reset it to disabled state
     void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT
     {
-        max_items_ = other.max_items_;
+        max_Tools_ = other.max_Tools_;
         head_ = other.head_;
         tail_ = other.tail_;
         overrun_counter_ = other.overrun_counter_;
         v_ = std::move(other.v_);
 
         // put &&other in disabled, but valid state
-        other.max_items_ = 0;
+        other.max_Tools_ = 0;
         other.head_ = other.tail_ = 0;
         other.overrun_counter_ = 0;
     }

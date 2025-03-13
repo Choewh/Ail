@@ -22,36 +22,36 @@ template<typename T>
 class mpmc_blocking_queue
 {
 public:
-    using item_type = T;
-    explicit mpmc_blocking_queue(size_t max_items)
-        : q_(max_items)
+    using Tool_type = T;
+    explicit mpmc_blocking_queue(size_t max_Tools)
+        : q_(max_Tools)
     {}
 
 #ifndef __MINGW32__
     // try to enqueue and block if no room left
-    void enqueue(T &&item)
+    void enqueue(T &&Tool)
     {
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
             pop_cv_.wait(lock, [this] { return !this->q_.full(); });
-            q_.push_back(std::move(item));
+            q_.push_back(std::move(Tool));
         }
         push_cv_.notify_one();
     }
 
     // enqueue immediately. overrun oldest message in the queue if no room left.
-    void enqueue_nowait(T &&item)
+    void enqueue_nowait(T &&Tool)
     {
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
-            q_.push_back(std::move(item));
+            q_.push_back(std::move(Tool));
         }
         push_cv_.notify_one();
     }
 
-    // try to dequeue item. if no item found. wait up to timeout and try again
-    // Return true, if succeeded dequeue item, false otherwise
-    bool dequeue_for(T &popped_item, std::chrono::milliseconds wait_duration)
+    // try to dequeue Tool. if no Tool found. wait up to timeout and try again
+    // Return true, if succeeded dequeue Tool, false otherwise
+    bool dequeue_for(T &popped_Tool, std::chrono::milliseconds wait_duration)
     {
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
@@ -59,7 +59,7 @@ public:
             {
                 return false;
             }
-            popped_item = std::move(q_.front());
+            popped_Tool = std::move(q_.front());
             q_.pop_front();
         }
         pop_cv_.notify_one();
@@ -71,32 +71,32 @@ public:
     // so release the mutex at the very end each function.
 
     // try to enqueue and block if no room left
-    void enqueue(T &&item)
+    void enqueue(T &&Tool)
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         pop_cv_.wait(lock, [this] { return !this->q_.full(); });
-        q_.push_back(std::move(item));
+        q_.push_back(std::move(Tool));
         push_cv_.notify_one();
     }
 
     // enqueue immediately. overrun oldest message in the queue if no room left.
-    void enqueue_nowait(T &&item)
+    void enqueue_nowait(T &&Tool)
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
-        q_.push_back(std::move(item));
+        q_.push_back(std::move(Tool));
         push_cv_.notify_one();
     }
 
-    // try to dequeue item. if no item found. wait up to timeout and try again
-    // Return true, if succeeded dequeue item, false otherwise
-    bool dequeue_for(T &popped_item, std::chrono::milliseconds wait_duration)
+    // try to dequeue Tool. if no Tool found. wait up to timeout and try again
+    // Return true, if succeeded dequeue Tool, false otherwise
+    bool dequeue_for(T &popped_Tool, std::chrono::milliseconds wait_duration)
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         if (!push_cv_.wait_for(lock, wait_duration, [this] { return !this->q_.empty(); }))
         {
             return false;
         }
-        popped_item = std::move(q_.front());
+        popped_Tool = std::move(q_.front());
         q_.pop_front();
         pop_cv_.notify_one();
         return true;

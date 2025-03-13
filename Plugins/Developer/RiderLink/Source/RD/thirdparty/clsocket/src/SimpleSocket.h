@@ -237,15 +237,15 @@ public:
     /// @return of -1 means that an error has occurred.
     virtual int32_t Send(const uint8_t *pBuf, size_t bytesToSend);
 
-    /// Attempts to send at most nNumItem blocks described by sendVector
+    /// Attempts to send at most nNumTool blocks described by sendVector
     /// to the socket descriptor associated with the socket object.
     /// @param sendVector pointer to an array of iovec structures
-    /// @param nNumItems number of items in the vector to process
+    /// @param nNumTools number of Tools in the vector to process
     /// <br>\b NOTE: Buffers are processed in the order specified.
     /// @return number of bytes actually sent, return of zero means the
     /// connection has been shutdown on the other side, and a return of -1
     /// means that an error has occurred.
-    virtual int32_t Send(const struct iovec *sendVector, int32_t nNumItems);
+    virtual int32_t Send(const struct iovec *sendVector, int32_t nNumTools);
 
     /// Copies data between one file descriptor and another.
     /// On some systems this copying is done within the kernel, and thus is
@@ -543,10 +543,10 @@ private:
     uint32_t SetWindowSize(uint32_t nOptionName, uint32_t nWindowSize);
 
 
-    /// Attempts to send at most nNumItem blocks described by sendVector
+    /// Attempts to send at most nNumTool blocks described by sendVector
     /// to the socket descriptor associated with the socket object.
     /// @param sendVector pointer to an array of iovec structures
-    /// @param nNumItems number of items in the vector to process
+    /// @param nNumTools number of Tools in the vector to process
     /// <br>\b Note: This implementation is for systems that don't natively
     /// support this functionality.
     /// @return number of bytes actually sent, return of zero means the

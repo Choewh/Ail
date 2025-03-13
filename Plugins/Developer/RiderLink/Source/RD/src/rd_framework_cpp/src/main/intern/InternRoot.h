@@ -37,10 +37,10 @@ class RD_FRAMEWORK_API InternRoot final : public RdReactiveBase
 {
 private:
 	// template<typename T>
-	mutable std::vector<InternedAny> my_items_lis;
+	mutable std::vector<InternedAny> my_Tools_lis;
 
 	// template<typename T>
-	mutable ordered_map<int32_t, InternedAny> other_items_list;
+	mutable ordered_map<int32_t, InternedAny> other_Tools_list;
 	// template<typename T>
 	mutable ordered_map<InternedAny, int32_t, any::TransparentHash, any::TransparentKeyEqual> inverse_map;
 
@@ -79,10 +79,10 @@ public:
 namespace rd
 {
 /*template<typename T>
-std::vector<value_or_wrapper<T>> InternRoot::myItemsList = {};
+std::vector<value_or_wrapper<T>> InternRoot::myToolsList = {};
 
 template<typename T>
-ordered_map<int32_t, value_or_wrapper<T>> InternRoot::otherItemsList = {};
+ordered_map<int32_t, value_or_wrapper<T>> InternRoot::otherToolsList = {};
 
 template<typename T>
 ordered_map<value_or_wrapper<T>, int32_t> InternRoot::inverseMap = {};*/
@@ -96,7 +96,7 @@ template <typename T>
 Wrapper<T> InternRoot::un_intern_value(int32_t id) const
 {
 	// don't need lock because value's already exists and never removes
-	return any::get<T>(is_index_owned(id) ? my_items_lis[id / 2] : other_items_list[id / 2]);
+	return any::get<T>(is_index_owned(id) ? my_Tools_lis[id / 2] : other_Tools_list[id / 2]);
 }
 
 template <typename T>
@@ -114,8 +114,8 @@ int32_t InternRoot::intern_value(Wrapper<T> value) const
 			InternedAnySerializer::write<T>(get_serialization_context(), buffer, wrapper::get<T>(value));
 			{
 				std::lock_guard<decltype(lock)> guard(lock);
-				index = static_cast<int32_t>(my_items_lis.size()) * 2;
-				my_items_lis.emplace_back(any);
+				index = static_cast<int32_t>(my_Tools_lis.size()) * 2;
+				my_Tools_lis.emplace_back(any);
 			}
 			buffer.write_integral<int32_t>(index);
 		});

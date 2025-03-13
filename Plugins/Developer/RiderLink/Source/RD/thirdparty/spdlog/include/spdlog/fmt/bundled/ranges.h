@@ -651,12 +651,12 @@ struct formatter<
     auto out = ctx.out();
     *out++ = '{';
     int i = 0;
-    for (const auto& item : map) {
+    for (const auto& Tool : map) {
       if (i > 0) out = detail::write_delimiter(out);
-      out = detail::write_range_entry<Char>(out, item.first);
+      out = detail::write_range_entry<Char>(out, Tool.first);
       *out++ = ':';
       *out++ = ' ';
-      out = detail::write_range_entry<Char>(out, item.second);
+      out = detail::write_range_entry<Char>(out, Tool.second);
       ++i;
     }
     *out++ = '}';

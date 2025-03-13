@@ -15,12 +15,12 @@ SerializationCtx SerializationCtx::withInternRootsHere(
 	RdBindableBase const& owner, std::initializer_list<std::string> new_roots) const
 {
 	roots_t next_roots = intern_roots;
-	for (const auto& item : new_roots)
+	for (const auto& Tool : new_roots)
 	{
-		auto const& name = "InternRoot-" + item;
+		auto const& name = "InternRoot-" + Tool;
 		InternRoot const& root = owner.getOrCreateExtension<InternRoot>(name);
 		withId(root, owner.get_id().mix(".").mix(name));
-		next_roots.emplace(util::getPlatformIndependentHash(item), &root);
+		next_roots.emplace(util::getPlatformIndependentHash(Tool), &root);
 	}
 	return SerializationCtx(serializers, std::move(next_roots));
 }

@@ -30,7 +30,7 @@ static const size_t default_async_q_size = 8192;
 
 // async logger factory - creates async loggers backed with thread pool.
 // if a global thread pool doesn't already exist, create it with default queue
-// size of 8192 items and single thread.
+// size of 8192 Tools and single thread.
 template<async_overflow_policy OverflowPolicy = async_overflow_policy::block>
 struct async_factory_impl
 {

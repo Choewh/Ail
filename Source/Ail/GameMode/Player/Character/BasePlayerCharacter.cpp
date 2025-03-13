@@ -5,7 +5,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/PostProcessComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "Misc/Utils.h"
@@ -35,7 +34,6 @@ ABasePlayerCharacter::ABasePlayerCharacter()
 	SpringArm->TargetArmLength = -50.0f;
 	SpringArm->ProbeChannel = ECC_WorldStatic;
 	SpringArm->bUsePawnControlRotation = true;
-	FVector Temp = SpringArm->GetUnfixedCameraPosition();
 
 	ToolMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	ToolMesh->SetupAttachment(SpringArm);

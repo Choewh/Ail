@@ -105,7 +105,7 @@ class dynamic_format_arg_store
   std::vector<detail::named_arg_info<char_type>> named_info_;
 
   // Storage of arguments not fitting into basic_format_arg must grow
-  // without relocation because items in data_ refer to it.
+  // without relocation because Tools in data_ refer to it.
   detail::dynamic_arg_list dynamic_args_;
 
   friend class basic_format_args<Context>;
